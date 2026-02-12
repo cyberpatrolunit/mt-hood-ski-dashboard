@@ -1,9 +1,9 @@
 {
   "lastChecks": {
-    "email": null,
-    "calendar": null,
-    "system": null,
-    "workspace": null
+    "email": "pending_auth",
+    "calendar": "pending_auth",
+    "system": 1770931161453,
+    "workspace": 1770931161453
   },
-  "notes": "Timestamps in Unix epoch ms. Null = never checked."
+  "notes": "Email/Calendar require Google auth. System health & workspace hygiene checked."
 }

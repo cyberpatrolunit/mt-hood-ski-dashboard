@@ -1,0 +1,154 @@
+{
+  "timestamp": "2026-02-12T17:12:21.331Z",
+  "forecast": {
+    "current": {
+      "temperature": 54,
+      "tempUnit": "F",
+      "windSpeed": "2 mph",
+      "windDirection": "SE",
+      "shortForecast": "Mostly Sunny",
+      "detailedForecast": "Mostly sunny. High near 54, with temperatures falling to around 51 in the afternoon. Southeast wind around 2 mph.",
+      "icon": "https://api.weather.gov/icons/land/day/sct?size=medium"
+    },
+    "nextSnow": {
+      "name": "Sunday Night",
+      "shortForecast": "Partly Cloudy then Slight Chance Rain And Snow",
+      "detailedForecast": "A slight chance of rain and snow after 4am. Partly cloudy, with a low around 32."
+    },
+    "periods": [
+      {
+        "number": 1,
+        "name": "Today",
+        "startTime": "2026-02-12T09:00:00-08:00",
+        "endTime": "2026-02-12T18:00:00-08:00",
+        "isDaytime": true,
+        "temperature": 54,
+        "temperatureUnit": "F",
+        "temperatureTrend": null,
+        "probabilityOfPrecipitation": {
+          "unitCode": "wmoUnit:percent",
+          "value": 1
+        },
+        "windSpeed": "2 mph",
+        "windDirection": "SE",
+        "icon": "https://api.weather.gov/icons/land/day/sct?size=medium",
+        "shortForecast": "Mostly Sunny",
+        "detailedForecast": "Mostly sunny. High near 54, with temperatures falling to around 51 in the afternoon. Southeast wind around 2 mph."
+      },
+      {
+        "number": 2,
+        "name": "Tonight",
+        "startTime": "2026-02-12T18:00:00-08:00",
+        "endTime": "2026-02-13T06:00:00-08:00",
+        "isDaytime": false,
+        "temperature": 35,
+        "temperatureUnit": "F",
+        "temperatureTrend": null,
+        "probabilityOfPrecipitation": {
+          "unitCode": "wmoUnit:percent",
+          "value": 13
+        },
+        "windSpeed": "1 mph",
+        "windDirection": "SW",
+        "icon": "https://api.weather.gov/icons/land/night/fog?size=medium",
+        "shortForecast": "Patchy Fog then Patchy Frost",
+        "detailedForecast": "Patchy fog between 9pm and midnight, then patchy frost and patchy fog between midnight and 1am, then areas of fog and patchy frost. Partly cloudy, with a low around 35. Southwest wind around 1 mph."
+      },
+      {
+        "number": 3,
+        "name": "Friday",
+        "startTime": "2026-02-13T06:00:00-08:00",
+        "endTime": "2026-02-13T18:00:00-08:00",
+        "isDaytime": true,
+        "temperature": 48,
+        "temperatureUnit": "F",
+        "temperatureTrend": null,
+        "probabilityOfPrecipitation": {
+          "unitCode": "wmoUnit:percent",
+          "value": 80
+        },
+        "windSpeed": "0 to 3 mph",
+        "windDirection": "SSE",
+        "icon": "https://api.weather.gov/icons/land/day/rain,50/rain,80?size=medium",
+        "shortForecast": "Light Rain",
+        "detailedForecast": "Patchy fog before 10am, then rain. Cloudy. High near 48, with temperatures falling to around 46 in the afternoon. South southeast wind 0 to 3 mph. Chance of precipitation is 80%. New rainfall amounts less than a tenth of an inch possible."
+      },
+      {
+        "number": 4,
+        "name": "Friday Night",
+        "startTime": "2026-02-13T18:00:00-08:00",
+        "endTime": "2026-02-14T06:00:00-08:00",
+        "isDaytime": false,
+        "temperature": 40,
+        "temperatureUnit": "F",
+        "temperatureTrend": null,
+        "probabilityOfPrecipitation": {
+          "unitCode": "wmoUnit:percent",
+          "value": 80
+        },
+        "windSpeed": "3 mph",
+        "windDirection": "S",
+        "icon": "https://api.weather.gov/icons/land/night/rain,80/rain,60?size=medium",
+        "shortForecast": "Light Rain",
+        "detailedForecast": "Rain before 1am, then rain likely and patchy fog. Mostly cloudy, with a low around 40. South wind around 3 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
+      },
+      {
+        "number": 5,
+        "name": "Saturday",
+        "startTime": "2026-02-14T06:00:00-08:00",
+        "endTime": "2026-02-14T18:00:00-08:00",
+        "isDaytime": true,
+        "temperature": 48,
+        "temperatureUnit": "F",
+        "temperatureTrend": null,
+        "probabilityOfPrecipitation": {
+          "unitCode": "wmoUnit:percent",
+          "value": 47
+        },
+        "windSpeed": "1 to 5 mph",
+        "windDirection": "ENE",
+        "icon": "https://api.weather.gov/icons/land/day/rain,50?size=medium",
+        "shortForecast": "Chance Light Rain",
+        "detailedForecast": "A chance of rain and patchy fog. Cloudy, with a high near 48. East northeast wind 1 to 5 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
+      },
+      {
+        "number": 6,
+        "name": "Saturday Night",
+        "startTime": "2026-02-14T18:00:00-08:00",
+        "endTime": "2026-02-15T06:00:00-08:00",
+        "isDaytime": false,
+        "temperature": 36,
+        "temperatureUnit": "F",
+        "temperatureTrend": null,
+        "probabilityOfPrecipitation": {
+          "unitCode": "wmoUnit:percent",
+          "value": 42
+        },
+        "windSpeed": "5 mph",
+        "windDirection": "N",
+        "icon": "https://api.weather.gov/icons/land/night/rain,40/rain,30?size=medium",
+        "shortForecast": "Chance Light Rain",
+        "detailedForecast": "A chance of rain. Mostly cloudy, with a low around 36. Chance of precipitation is 40%."
+      },
+      {
+        "number": 7,
+        "name": "Sunday",
+        "startTime": "2026-02-15T06:00:00-08:00",
+        "endTime": "2026-02-15T18:00:00-08:00",
+        "isDaytime": true,
+        "temperature": 51,
+        "temperatureUnit": "F",
+        "temperatureTrend": null,
+        "probabilityOfPrecipitation": {
+          "unitCode": "wmoUnit:percent",
+          "value": 17
+        },
+        "windSpeed": "5 mph",
+        "windDirection": "N",
+        "icon": "https://api.weather.gov/icons/land/day/rain,20/bkn?size=medium",
+        "shortForecast": "Slight Chance Light Rain then Partly Sunny",
+        "detailedForecast": "A slight chance of rain before 10am. Partly sunny, with a high near 51."
+      }
+    ]
+  }
+}

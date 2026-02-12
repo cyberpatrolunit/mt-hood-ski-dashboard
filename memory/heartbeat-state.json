@@ -1,0 +1,9 @@
+{
+  "lastChecks": {
+    "email": null,
+    "calendar": null,
+    "system": null,
+    "workspace": null
+  },
+  "notes": "Timestamps in Unix epoch ms. Null = never checked."
+}

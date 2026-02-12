@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPU_Agent Chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .header {
+      background: rgba(30, 30, 30, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(20px);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .robot {
+      font-size: 28px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: #999;
+    }
+
+    .model-badge {
+      padding: 4px 10px;
+      background: rgba(102, 126, 234, 0.2);
+      border: 1px solid rgba(102, 126, 234, 0.4);
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #a8b4ff;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 80%;
+      animation: slideIn 0.2s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .message.user .message-avatar {
+      background: rgba(102, 126, 234, 0.2);
+    }
+
+    .message-content {
+      background: rgba(30, 30, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 12px 16px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .message.user .message-content {
+      background: rgba(102, 126, 234, 0.2);
+      border-color: rgba(102, 126, 234, 0.4);
+    }
+
+    .message-time {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 16px;
+    }
+
+    .typing-indicator.active {
+      display: flex;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #666;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.7;
+      }
+      30% {
+        transform: translateY(-10px);
+        opacity: 1;
+      }
+    }
+
+    .input-area {
+      background: rgba(30, 30, 30, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 20px;
+      backdrop-filter: blur(20px);
+    }
+
+    .input-container {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    #message-input {
+      flex: 1;
+      background: rgba(50, 50, 50, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      max-height: 120px;
+      min-height: 44px;
+    }
+
+    #message-input:focus {
+      outline: none;
+      border-color: rgba(102, 126, 234, 0.6);
+      background: rgba(50, 50, 50, 0.7);
+    }
+
+    #send-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      height: 44px;
+    }
+
+    #send-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    #send-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .shortcuts {
+      font-size: 11px;
+      color: #666;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* Custom scrollbar */
+    .messages::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .messages::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .error {
+      color: #f87171;
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 8px 20px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <span class="robot">🤖</span>
+      <span class="title">CPU_Agent</span>
+      <div class="status-dot"></div>
+    </div>
+    <div class="header-right">
+      <span class="model-badge" id="model-badge">Sonnet</span>
+      <span id="token-count">0k tokens</span>
+    </div>
+  </div>
+
+  <div class="messages" id="messages">
+    <div class="message">
+      <div class="message-avatar">🤖</div>
+      <div>
+        <div class="message-content">
+          Hey. I'm ready. What do you need?
+        </div>
+        <div class="message-time">Ready</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="typing-indicator" id="typing">
+    <div class="message-avatar">🤖</div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-container">
+      <textarea 
+        id="message-input" 
+        placeholder="Type your message..." 
+        rows="1"
+      ></textarea>
+      <button id="send-button">Send</button>
+    </div>
+    <div class="shortcuts">
+      ⌘ + Enter to send · ⌘ + K to clear · Auto-resize enabled
+    </div>
+  </div>
+
+  <script>
+    const messagesEl = document.getElementById('messages');
+    const inputEl = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-button');
+    const typingEl = document.getElementById('typing');
+    const tokenCountEl = document.getElementById('token-count');
+    const modelBadgeEl = document.getElementById('model-badge');
+
+    let isWaiting = false;
+
+    // Auto-resize textarea
+    inputEl.addEventListener('input', () => {
+      inputEl.style.height = 'auto';
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + 'px';
+    });
+
+    // Send message
+    async function sendMessage() {
+      const message = inputEl.value.trim();
+      if (!message || isWaiting) return;
+
+      // Add user message
+      addMessage(message, 'user');
+      inputEl.value = '';
+      inputEl.style.height = 'auto';
+      
+      isWaiting = true;
+      sendBtn.disabled = true;
+      typingEl.classList.add('active');
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        
+        if (data.error) {
+          showError(data.error);
+        } else {
+          addMessage(data.response, 'agent');
+        }
+      } catch (error) {
+        showError('Failed to send message: ' + error.message);
+      } finally {
+        isWaiting = false;
+        sendBtn.disabled = false;
+        typingEl.classList.remove('active');
+      }
+    }
+
+    function addMessage(text, sender) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = \`message \${sender}\`;
+      
+      const avatar = sender === 'user' ? '👤' : '🤖';
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      messageDiv.innerHTML = \`
+        <div class="message-avatar">\${avatar}</div>
+        <div>
+          <div class="message-content">\${escapeHtml(text)}</div>
+          <div class="message-time">\${time}</div>
+        </div>
+      \`;
+      
+      messagesEl.appendChild(messageDiv);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function showError(message) {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error';
+      errorDiv.textContent = message;
+      messagesEl.appendChild(errorDiv);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\\n/g, '<br>');
+    }
+
+    // Event listeners
+    sendBtn.addEventListener('click', sendMessage);
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        sendMessage();
+      }
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        if (confirm('Clear chat history?')) {
+          messagesEl.innerHTML = '';
+        }
+      }
+    });
+
+    // Update status
+    async function updateStatus() {
+      try {
+        const response = await fetch('/api/openclaw');
+        const data = await response.json();
+        
+        const tokens = data.tokens || 0;
+        tokenCountEl.textContent = \`\${Math.round(tokens / 1000)}k tokens (\${data.tokensUsed}%)\`;
+        
+        // Update model badge
+        const model = data.model || 'sonnet';
+        if (model.includes('haiku')) modelBadgeEl.textContent = 'Haiku';
+        else if (model.includes('opus')) modelBadgeEl.textContent = 'Opus';
+        else if (model.includes('qwen')) modelBadgeEl.textContent = 'Qwen';
+        else modelBadgeEl.textContent = 'Sonnet';
+      } catch (error) {
+        console.error('Status update failed:', error);
+      }
+    }
+
+    // Update status every 10 seconds
+    updateStatus();
+    setInterval(updateStatus, 10000);
+
+    // Focus input on load
+    inputEl.focus();
+  </script>
+</body>
+</html>

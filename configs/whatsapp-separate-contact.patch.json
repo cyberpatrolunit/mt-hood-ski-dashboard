@@ -1,0 +1,25 @@
+{
+  "note": "Config patch to disable selfChatMode after Google Voice WhatsApp is set up",
+  "instructions": "Apply this patch using: gateway action=config.patch raw=<this-file>",
+  "patch": {
+    "channels": {
+      "whatsapp": {
+        "selfChatMode": false
+      }
+    }
+  },
+  "requirements": [
+    "Google Voice number obtained",
+    "WhatsApp registered on that number",
+    "WhatsApp linked to OpenClaw gateway via QR code",
+    "Verified messaging works both ways"
+  ],
+  "apply_command": "Use gateway tool with action=config.patch and this JSON as raw parameter",
+  "rollback": {
+    "channels": {
+      "whatsapp": {
+        "selfChatMode": true
+      }
+    }
+  }
+}

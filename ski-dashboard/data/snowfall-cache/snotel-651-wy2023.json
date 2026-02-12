@@ -1,0 +1,2192 @@
+[
+  {
+    "date": "2022-10-01",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-02",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-03",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-04",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-05",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-06",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-07",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-08",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-09",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-10",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-11",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-12",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-13",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-14",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-15",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-16",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-17",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-18",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-19",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-20",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-21",
+    "snowDepth": 0,
+    "snowfall": 1.6,
+    "precipitation": 1.6
+  },
+  {
+    "date": "2022-10-22",
+    "snowDepth": 2,
+    "snowfall": 1.3,
+    "precipitation": 1.3
+  },
+  {
+    "date": "2022-10-23",
+    "snowDepth": 9,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2022-10-24",
+    "snowDepth": 9,
+    "snowfall": 1.6,
+    "precipitation": 1.6
+  },
+  {
+    "date": "2022-10-25",
+    "snowDepth": 8,
+    "snowfall": 1,
+    "precipitation": 1
+  },
+  {
+    "date": "2022-10-26",
+    "snowDepth": 14,
+    "snowfall": 0.9,
+    "precipitation": 0.9
+  },
+  {
+    "date": "2022-10-27",
+    "snowDepth": 18,
+    "snowfall": 4,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-28",
+    "snowDepth": 17,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-10-29",
+    "snowDepth": 14,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2022-10-30",
+    "snowDepth": 11,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-10-31",
+    "snowDepth": 10,
+    "snowfall": 1.1,
+    "precipitation": 1.1
+  },
+  {
+    "date": "2022-11-01",
+    "snowDepth": 7,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2022-11-02",
+    "snowDepth": 13,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2022-11-03",
+    "snowDepth": 14,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2022-11-04",
+    "snowDepth": 17,
+    "snowfall": 6,
+    "precipitation": 6
+  },
+  {
+    "date": "2022-11-05",
+    "snowDepth": 8,
+    "snowfall": 1.2,
+    "precipitation": 1.2
+  },
+  {
+    "date": "2022-11-06",
+    "snowDepth": 13,
+    "snowfall": 0.9,
+    "precipitation": 0.9
+  },
+  {
+    "date": "2022-11-07",
+    "snowDepth": 22,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2022-11-08",
+    "snowDepth": 22,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-11-09",
+    "snowDepth": 18,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-10",
+    "snowDepth": 18,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-11",
+    "snowDepth": 17,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-11-12",
+    "snowDepth": 16,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-13",
+    "snowDepth": 16,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-11-14",
+    "snowDepth": 15,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-15",
+    "snowDepth": 15,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-16",
+    "snowDepth": 14,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-17",
+    "snowDepth": 13,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-18",
+    "snowDepth": 14,
+    "snowfall": 1,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-19",
+    "snowDepth": 14,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-20",
+    "snowDepth": 13,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-21",
+    "snowDepth": 14,
+    "snowfall": 1,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-22",
+    "snowDepth": 12,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2022-11-23",
+    "snowDepth": 14,
+    "snowfall": 2,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-24",
+    "snowDepth": 13,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-25",
+    "snowDepth": 13,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-11-26",
+    "snowDepth": 13,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-11-27",
+    "snowDepth": 14,
+    "snowfall": 1.4,
+    "precipitation": 1.4
+  },
+  {
+    "date": "2022-11-28",
+    "snowDepth": 25,
+    "snowfall": 1.1,
+    "precipitation": 1.1
+  },
+  {
+    "date": "2022-11-29",
+    "snowDepth": 35,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2022-11-30",
+    "snowDepth": 41,
+    "snowfall": 2,
+    "precipitation": 2
+  },
+  {
+    "date": "2022-12-01",
+    "snowDepth": 58,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2022-12-02",
+    "snowDepth": 56,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2022-12-03",
+    "snowDepth": 53,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-12-04",
+    "snowDepth": 49,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2022-12-05",
+    "snowDepth": 52,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-12-06",
+    "snowDepth": 50,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-12-07",
+    "snowDepth": 49,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-12-08",
+    "snowDepth": 47,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2022-12-09",
+    "snowDepth": 55,
+    "snowfall": 0.9,
+    "precipitation": 0.9
+  },
+  {
+    "date": "2022-12-10",
+    "snowDepth": 60,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2022-12-11",
+    "snowDepth": 58,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2022-12-12",
+    "snowDepth": 65,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-12-13",
+    "snowDepth": 62,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-12-14",
+    "snowDepth": 60,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2022-12-15",
+    "snowDepth": 58,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-12-16",
+    "snowDepth": 55,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-12-17",
+    "snowDepth": 54,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-12-18",
+    "snowDepth": 54,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2022-12-19",
+    "snowDepth": 55,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2022-12-20",
+    "snowDepth": 58,
+    "snowfall": 1.8,
+    "precipitation": 1.8
+  },
+  {
+    "date": "2022-12-21",
+    "snowDepth": 66,
+    "snowfall": 8,
+    "precipitation": 0
+  },
+  {
+    "date": "2022-12-22",
+    "snowDepth": 64,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2022-12-23",
+    "snowDepth": 64,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2022-12-24",
+    "snowDepth": 62,
+    "snowfall": 0.9,
+    "precipitation": 0.9
+  },
+  {
+    "date": "2022-12-25",
+    "snowDepth": 59,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2022-12-26",
+    "snowDepth": 56,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2022-12-27",
+    "snowDepth": 51,
+    "snowfall": 1.2,
+    "precipitation": 1.2
+  },
+  {
+    "date": "2022-12-28",
+    "snowDepth": 59,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2022-12-29",
+    "snowDepth": 61,
+    "snowfall": 0.9,
+    "precipitation": 0.9
+  },
+  {
+    "date": "2022-12-30",
+    "snowDepth": 64,
+    "snowfall": 0.7,
+    "precipitation": 0.7
+  },
+  {
+    "date": "2022-12-31",
+    "snowDepth": 66,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-01-01",
+    "snowDepth": 66,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-02",
+    "snowDepth": 65,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-01-03",
+    "snowDepth": 64,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-01-04",
+    "snowDepth": 67,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-01-05",
+    "snowDepth": 67,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-01-06",
+    "snowDepth": 66,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-07",
+    "snowDepth": 66,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-01-08",
+    "snowDepth": 70,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-01-09",
+    "snowDepth": 73,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-01-10",
+    "snowDepth": 73,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-01-11",
+    "snowDepth": 71,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-01-12",
+    "snowDepth": 74,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-01-13",
+    "snowDepth": 72,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-14",
+    "snowDepth": 70,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-01-15",
+    "snowDepth": 70,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-01-16",
+    "snowDepth": 76,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-01-17",
+    "snowDepth": 75,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-01-18",
+    "snowDepth": 76,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-01-19",
+    "snowDepth": 79,
+    "snowfall": 3,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-20",
+    "snowDepth": 78,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-01-21",
+    "snowDepth": 76,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-01-22",
+    "snowDepth": 81,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-01-23",
+    "snowDepth": 81,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-24",
+    "snowDepth": 80,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-25",
+    "snowDepth": 79,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-26",
+    "snowDepth": 78,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-27",
+    "snowDepth": 77,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2023-01-28",
+    "snowDepth": 81,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-01-29",
+    "snowDepth": 82,
+    "snowfall": 1,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-01-30",
+    "snowDepth": 76,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-01-31",
+    "snowDepth": 76,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-01",
+    "snowDepth": 76,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-02",
+    "snowDepth": 75,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-03",
+    "snowDepth": 75,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-02-04",
+    "snowDepth": 76,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-02-05",
+    "snowDepth": 77,
+    "snowfall": 1.4,
+    "precipitation": 1.4
+  },
+  {
+    "date": "2023-02-06",
+    "snowDepth": 88,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-02-07",
+    "snowDepth": 87,
+    "snowfall": 0.9,
+    "precipitation": 0.9
+  },
+  {
+    "date": "2023-02-08",
+    "snowDepth": 92,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-02-09",
+    "snowDepth": 92,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-10",
+    "snowDepth": 90,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-11",
+    "snowDepth": 90,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-12",
+    "snowDepth": 89,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-13",
+    "snowDepth": 88,
+    "snowfall": 1.3,
+    "precipitation": 1.3
+  },
+  {
+    "date": "2023-02-14",
+    "snowDepth": 100,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-02-15",
+    "snowDepth": 100,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-02-16",
+    "snowDepth": 98,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-17",
+    "snowDepth": 96,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-18",
+    "snowDepth": 95,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-19",
+    "snowDepth": 95,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-02-20",
+    "snowDepth": 94,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-02-21",
+    "snowDepth": 94,
+    "snowfall": 1.5,
+    "precipitation": 1.5
+  },
+  {
+    "date": "2023-02-22",
+    "snowDepth": 106,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-02-23",
+    "snowDepth": 111,
+    "snowfall": 5,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-02-24",
+    "snowDepth": 110,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-02-25",
+    "snowDepth": 107,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-02-26",
+    "snowDepth": 105,
+    "snowfall": 1.4,
+    "precipitation": 1.4
+  },
+  {
+    "date": "2023-02-27",
+    "snowDepth": 121,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-02-28",
+    "snowDepth": 121,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2023-03-01",
+    "snowDepth": 127,
+    "snowfall": 6,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-03-02",
+    "snowDepth": 123,
+    "snowfall": 0.7,
+    "precipitation": 0.7
+  },
+  {
+    "date": "2023-03-03",
+    "snowDepth": 126,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-03-04",
+    "snowDepth": 128,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-03-05",
+    "snowDepth": 128,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-03-06",
+    "snowDepth": 129,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-03-07",
+    "snowDepth": 128,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-03-08",
+    "snowDepth": 128,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-03-09",
+    "snowDepth": 129,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-03-10",
+    "snowDepth": 133,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-03-11",
+    "snowDepth": 137,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-03-12",
+    "snowDepth": 134,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-03-13",
+    "snowDepth": 132,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-03-14",
+    "snowDepth": 134,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-03-15",
+    "snowDepth": 131,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-03-16",
+    "snowDepth": 132,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-03-17",
+    "snowDepth": 130,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-03-18",
+    "snowDepth": 128,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-03-19",
+    "snowDepth": 126,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-03-20",
+    "snowDepth": 126,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-03-21",
+    "snowDepth": 128,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-03-22",
+    "snowDepth": 127,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-03-23",
+    "snowDepth": 127,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-03-24",
+    "snowDepth": 132,
+    "snowfall": 1.9,
+    "precipitation": 1.9
+  },
+  {
+    "date": "2023-03-25",
+    "snowDepth": 152,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-03-26",
+    "snowDepth": 151,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-03-27",
+    "snowDepth": 150,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-03-28",
+    "snowDepth": 148,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-03-29",
+    "snowDepth": 150,
+    "snowfall": 1.1,
+    "precipitation": 1.1
+  },
+  {
+    "date": "2023-03-30",
+    "snowDepth": 147,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-03-31",
+    "snowDepth": 148,
+    "snowfall": 0.7,
+    "precipitation": 0.7
+  },
+  {
+    "date": "2023-04-01",
+    "snowDepth": 153,
+    "snowfall": 2.1,
+    "precipitation": 2.1
+  },
+  {
+    "date": "2023-04-02",
+    "snowDepth": 168,
+    "snowfall": 1.4,
+    "precipitation": 1.4
+  },
+  {
+    "date": "2023-04-03",
+    "snowDepth": 177,
+    "snowfall": 0.8,
+    "precipitation": 0.8
+  },
+  {
+    "date": "2023-04-04",
+    "snowDepth": 176,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-04-05",
+    "snowDepth": 173,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-06",
+    "snowDepth": 170,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-04-07",
+    "snowDepth": 168,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-04-08",
+    "snowDepth": 163,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-09",
+    "snowDepth": 162,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-04-10",
+    "snowDepth": 158,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-04-11",
+    "snowDepth": 154,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-04-12",
+    "snowDepth": 156,
+    "snowfall": 2,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-13",
+    "snowDepth": 160,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-04-14",
+    "snowDepth": 156,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-15",
+    "snowDepth": 152,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-16",
+    "snowDepth": 150,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-04-17",
+    "snowDepth": 151,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-04-18",
+    "snowDepth": 152,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-04-19",
+    "snowDepth": 155,
+    "snowfall": 0.4,
+    "precipitation": 0.4
+  },
+  {
+    "date": "2023-04-20",
+    "snowDepth": 159,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-04-21",
+    "snowDepth": 165,
+    "snowfall": 1.4,
+    "precipitation": 1.4
+  },
+  {
+    "date": "2023-04-22",
+    "snowDepth": 160,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-04-23",
+    "snowDepth": 154,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-04-24",
+    "snowDepth": 151,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-04-25",
+    "snowDepth": 152,
+    "snowfall": 1,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-26",
+    "snowDepth": 148,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-27",
+    "snowDepth": 146,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-28",
+    "snowDepth": 141,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-29",
+    "snowDepth": 135,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-04-30",
+    "snowDepth": 132,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-01",
+    "snowDepth": 129,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-02",
+    "snowDepth": 129,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-03",
+    "snowDepth": 124,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-04",
+    "snowDepth": 121,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-05-05",
+    "snowDepth": 120,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-05-06",
+    "snowDepth": 121,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-05-07",
+    "snowDepth": 119,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-05-08",
+    "snowDepth": 119,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-05-09",
+    "snowDepth": 118,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-10",
+    "snowDepth": 116,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-11",
+    "snowDepth": 116,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-12",
+    "snowDepth": 113,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-13",
+    "snowDepth": 108,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-14",
+    "snowDepth": 100,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-15",
+    "snowDepth": 94,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-16",
+    "snowDepth": 90,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-17",
+    "snowDepth": 86,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-18",
+    "snowDepth": 84,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-19",
+    "snowDepth": 80,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-20",
+    "snowDepth": 64,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-21",
+    "snowDepth": 73,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-05-22",
+    "snowDepth": 70,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-23",
+    "snowDepth": 69,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-24",
+    "snowDepth": 66,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-25",
+    "snowDepth": 64,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-26",
+    "snowDepth": 62,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-05-27",
+    "snowDepth": 59,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-28",
+    "snowDepth": 56,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-29",
+    "snowDepth": 52,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-30",
+    "snowDepth": 49,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-05-31",
+    "snowDepth": 45,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-01",
+    "snowDepth": 43,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-02",
+    "snowDepth": 41,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-03",
+    "snowDepth": 38,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-04",
+    "snowDepth": 52,
+    "snowfall": 14,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-05",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-06",
+    "snowDepth": 25,
+    "snowfall": 25,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-07",
+    "snowDepth": 20,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-08",
+    "snowDepth": 17,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-09",
+    "snowDepth": 15,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-10",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-11",
+    "snowDepth": 64,
+    "snowfall": 64,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-12",
+    "snowDepth": 5,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-13",
+    "snowDepth": 2,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-14",
+    "snowDepth": 3,
+    "snowfall": 1,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-15",
+    "snowDepth": 3,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-16",
+    "snowDepth": 3,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-17",
+    "snowDepth": 3,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-18",
+    "snowDepth": 3,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-06-19",
+    "snowDepth": 3,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-06-20",
+    "snowDepth": 3,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-21",
+    "snowDepth": 3,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-22",
+    "snowDepth": 3,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-23",
+    "snowDepth": 1,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-24",
+    "snowDepth": 1,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-25",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-26",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-27",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-28",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-29",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-06-30",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-01",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-02",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-03",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-04",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-05",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-06",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-07",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-08",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-09",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-10",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-11",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-12",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-13",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-14",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-15",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-16",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-17",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-18",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-19",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-20",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-21",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-22",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-23",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-24",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-25",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-26",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-27",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-28",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-29",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-30",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-07-31",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-01",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-02",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-03",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-04",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-05",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-06",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-07",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-08",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-09",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-10",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-11",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-12",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-13",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-14",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-15",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-16",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-17",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-18",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-19",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-20",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-21",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-22",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-23",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-24",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-25",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-26",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-27",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-28",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-08-29",
+    "snowDepth": 0,
+    "snowfall": 0.7,
+    "precipitation": 0.7
+  },
+  {
+    "date": "2023-08-30",
+    "snowDepth": 0,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2023-08-31",
+    "snowDepth": 0,
+    "snowfall": 0.6,
+    "precipitation": 0.6
+  },
+  {
+    "date": "2023-09-01",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-02",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-03",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-04",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-05",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-06",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-07",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-08",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-09",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-10",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-11",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-12",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-13",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-14",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-15",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-16",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-17",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-18",
+    "snowDepth": 0,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-09-19",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-20",
+    "snowDepth": 0,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-09-21",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-22",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2023-09-23",
+    "snowDepth": 0,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-09-24",
+    "snowDepth": 0,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2023-09-25",
+    "snowDepth": 0,
+    "snowfall": 0.1,
+    "precipitation": 0.1
+  },
+  {
+    "date": "2023-09-26",
+    "snowDepth": 0,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-09-27",
+    "snowDepth": 0,
+    "snowfall": 1.1,
+    "precipitation": 1.1
+  },
+  {
+    "date": "2023-09-28",
+    "snowDepth": 0,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-09-29",
+    "snowDepth": 0,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2023-09-30",
+    "snowDepth": 0,
+    "snowfall": 0,
+    "precipitation": 0
+  }
+]

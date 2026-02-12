@@ -1,0 +1,4163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1B4332">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hood Meadows">
+    <title>Hood Meadows Ski Conditions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="canvas-snow.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* ====================
+           SPLASH SCREEN
+           ==================== */
+        
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #1B4332 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.8s ease-out;
+            overflow: hidden;
+        }
+        
+        #splashScreen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Wood grain texture for splash screen */
+        #splashScreen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(93, 64, 55, 0.05) 3px,
+                    rgba(93, 64, 55, 0.05) 6px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(93, 64, 55, 0.03) 2px,
+                    rgba(93, 64, 55, 0.03) 4px
+                );
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        /* Warm glow effect */
+        #splashScreen::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(
+                ellipse at center,
+                rgba(212, 175, 55, 0.15) 0%,
+                transparent 70%
+            );
+            pointer-events: none;
+        }
+        
+        .splash-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 600px;
+            animation: splashFadeIn 1s ease-out;
+        }
+        
+        @keyframes splashFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .splash-icon {
+            font-size: 4rem;
+            margin-bottom: 24px;
+            animation: splashIconFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes splashIconFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        /* Apply float animation globally for reuse */
+        @keyframes splashIconFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .splash-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 3rem;
+            color: #FFFDD0;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(212, 175, 55, 0.3);
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        
+        .splash-tagline {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.1rem;
+            color: #D4AF37;
+            font-style: italic;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-bottom: 32px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+        
+        .splash-divider {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            margin: 24px auto;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+        }
+        
+        .splash-credits {
+            font-size: 0.95rem;
+            color: #B8860B;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .splash-version {
+            font-size: 2.5rem;
+            color: #FFFDD0;
+            display: inline-block;
+            margin: 24px 0;
+            cursor: pointer !important;
+            transition: all 0.3s ease;
+            padding: 12px 24px;
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            animation: splashIconFloat 2s ease-in-out infinite;
+        }
+        
+        .splash-version:hover {
+            transform: scale(1.15);
+            filter: brightness(1.2);
+        }
+        
+        .splash-skip {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #A1887F;
+            opacity: 0.7;
+            animation: splashSkipPulse 2s ease-in-out infinite;
+            cursor: pointer;
+            z-index: 3;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .splash-skip:hover {
+            opacity: 1;
+            color: #D4AF37;
+        }
+        
+        @keyframes splashSkipPulse {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        
+        /* Snowflakes for splash screen */
+        .splash-snowflake {
+            position: absolute;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            animation: splashSnowfall linear infinite;
+            z-index: 1;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        
+        @keyframes splashSnowfall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .splash-title {
+                font-size: 2rem;
+                letter-spacing: 1px;
+            }
+            
+            .splash-tagline {
+                font-size: 0.9rem;
+            }
+            
+            .splash-icon {
+                font-size: 3rem;
+            }
+            
+            .splash-skip {
+                bottom: 30px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #1B4332 100%);
+            background-attachment: fixed;
+            color: #F5F5DC;
+            min-height: 100vh;
+            position: relative;
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+        
+        /* Wood grain texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(93, 64, 55, 0.03) 2px,
+                    rgba(93, 64, 55, 0.03) 4px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 1px,
+                    rgba(93, 64, 55, 0.02) 1px,
+                    rgba(93, 64, 55, 0.02) 3px
+                );
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+        
+        /* Warm lighting glow effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 80%;
+            height: 80%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(
+                ellipse at center,
+                rgba(212, 175, 55, 0.08) 0%,
+                transparent 70%
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        #snowCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: transparent;
+        }
+        
+        /* ====================
+           NAVIGATION SYSTEM
+           ==================== */
+        
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: linear-gradient(135deg, rgba(62, 39, 35, 0.95) 0%, rgba(93, 64, 55, 0.9) 100%);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+        }
+        
+        .nav-header {
+            padding: 32px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(45, 106, 79, 0.4) 0%, rgba(27, 67, 50, 0.3) 100%);
+            border-bottom: 3px solid rgba(212, 175, 55, 0.4);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(212, 175, 55, 0.2);
+        }
+        
+        .nav-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(62, 39, 35, 0.05) 3px,
+                    rgba(62, 39, 35, 0.05) 6px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(62, 39, 35, 0.03) 2px,
+                    rgba(62, 39, 35, 0.03) 4px
+                );
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        .nav-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+        }
+        
+        .nav-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.2rem;
+            color: #FFFDD0;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+            user-select: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .nav-title:hover {
+            color: #D4AF37;
+            text-shadow: 0 4px 16px rgba(212, 175, 55, 0.6);
+        }
+        
+        .easter-egg-squirrel {
+            font-size: 2rem;
+            cursor: pointer !important;
+            transition: all 0.3s ease;
+            animation: squirrelBounce 2s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        .easter-egg-squirrel:hover {
+            transform: scale(1.25) rotate(10deg);
+            filter: brightness(1.3);
+        }
+        
+        @keyframes squirrelBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        
+        .nav-subtitle {
+            color: #D4AF37;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .nav-subtitle::before,
+        .nav-subtitle::after {
+            content: '◆';
+            font-size: 0.6rem;
+            opacity: 0.6;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            padding: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            min-width: 60px;
+            padding: 12px 8px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #A1887F;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            text-align: center;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .nav-tab-icon {
+            font-size: 1.2rem;
+        }
+        
+        .nav-tab-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .nav-tab:hover {
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        .nav-tab.active {
+            color: #FFFDD0;
+            border-bottom-color: #D4AF37;
+            background: rgba(212, 175, 55, 0.15);
+        }
+        
+        /* Bottom Tab Bar for Mobile */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: linear-gradient(135deg, rgba(62, 39, 35, 0.98) 0%, rgba(93, 64, 55, 0.95) 100%);
+            backdrop-filter: blur(16px);
+            border-top: 2px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5);
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+        }
+        
+        .bottom-nav-tabs {
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .bottom-nav-tab {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #A1887F;
+            cursor: pointer;
+            padding: 8px 4px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+        }
+        
+        .bottom-nav-tab-icon {
+            font-size: 1.4rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .bottom-nav-tab-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 500;
+        }
+        
+        .bottom-nav-tab.active {
+            color: #FFFDD0;
+        }
+        
+        .bottom-nav-tab.active .bottom-nav-tab-icon {
+            transform: scale(1.15);
+        }
+        
+        .bottom-nav-tab.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 3px;
+            background: #D4AF37;
+            border-radius: 0 0 3px 3px;
+        }
+        
+        /* ====================
+           CONTENT SECTIONS
+           ==================== */
+        
+        .app-container {
+            padding-top: 110px; /* Space for top nav */
+            padding-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 8px;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-header {
+            text-align: center;
+            padding: 16px 12px 12px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.75rem;
+            color: #FFFDD0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            margin-bottom: 8px;
+        }
+        
+        .section-description {
+            font-family: 'Playfair Display', Georgia, serif;
+            color: #D4AF37;
+            font-size: 0.95rem;
+            font-style: italic;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        
+        .last-updated {
+            margin-top: 8px;
+            color: #A1887F;
+            font-size: 0.75rem;
+            font-weight: 400;
+        }
+        
+        /* Card Styling */
+        .card {
+            background: linear-gradient(135deg, rgba(93, 64, 55, 0.6) 0%, rgba(62, 39, 35, 0.5) 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 2px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(212, 175, 55, 0.15);
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 3px,
+                rgba(62, 39, 35, 0.08) 3px,
+                rgba(62, 39, 35, 0.08) 6px
+            );
+            border-radius: 16px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .card-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.15rem;
+            color: #FFFDD0;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        /* ====================
+           DASHBOARD SECTION
+           ==================== */
+        
+        .conditions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .condition-card {
+            background: linear-gradient(135deg, rgba(93, 64, 55, 0.6) 0%, rgba(62, 39, 35, 0.5) 100%);
+            border-radius: 12px;
+            padding: 14px 12px;
+            text-align: center;
+            border: 2px solid rgba(212, 175, 55, 0.25);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .condition-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(62, 39, 35, 0.1) 2px,
+                rgba(62, 39, 35, 0.1) 4px
+            );
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        .condition-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        
+        .condition-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: #CD853F;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        .condition-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #D4AF37;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        .status-open {
+            color: #52B788;
+        }
+        
+        .status-closed {
+            color: #CD853F;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            background: linear-gradient(135deg, rgba(93, 64, 55, 0.6) 0%, rgba(62, 39, 35, 0.5) 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 2px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            height: 50vh;
+            min-height: 250px;
+            max-height: 400px;
+            position: relative;
+        }
+        
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 3px,
+                rgba(62, 39, 35, 0.08) 3px,
+                rgba(62, 39, 35, 0.08) 6px
+            );
+            border-radius: 16px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .chart-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: #FFFDD0;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        #snowfallChart {
+            height: calc(100% - 45px) !important;
+        }
+        
+        .chart-subtitle {
+            font-size: 0.75rem;
+            color: #D4AF37;
+            margin-top: -8px;
+            margin-bottom: 12px;
+            position: relative;
+            font-style: italic;
+        }
+        
+        /* ====================
+           EXPORT/SHARE BUTTONS (TINY ICONS)
+           ==================== */
+        
+        .export-buttons {
+            position: absolute;
+            top: 18px;
+            right: 16px;
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+        
+        .export-btn {
+            background: none;
+            border: none;
+            color: #A1887F;
+            padding: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            position: relative;
+        }
+        
+        .export-btn:hover {
+            opacity: 1;
+            color: #D4AF37;
+            transform: scale(1.15);
+        }
+        
+        .export-btn:active {
+            transform: scale(1.05);
+        }
+        
+        /* Optional: Tooltip on hover */
+        .export-btn::after {
+            content: attr(title);
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: rgba(62, 39, 35, 0.95);
+            color: #D4AF37;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        
+        .export-btn:hover::after {
+            opacity: 1;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, rgba(82, 183, 136, 0.95) 0%, rgba(64, 145, 108, 0.9) 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        /* Print-specific styles */
+        @media print {
+            body {
+                background: white !important;
+                color: #1B4332 !important;
+            }
+            
+            .nav-container,
+            .bottom-nav,
+            .export-buttons,
+            #snowCanvas,
+            .splash-screen {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-top: 0 !important;
+                padding-top: 20px !important;
+            }
+            
+            .section {
+                display: block !important;
+                page-break-after: always;
+            }
+            
+            .section-header {
+                border-bottom: 3px solid #1B4332;
+                padding-bottom: 12px;
+                margin-bottom: 24px;
+            }
+            
+            .section-title {
+                color: #1B4332 !important;
+                font-size: 2rem !important;
+            }
+            
+            .section-description {
+                color: #2D6A4F !important;
+            }
+            
+            .card, .condition-card, .chart-container {
+                background: white !important;
+                border: 2px solid #2D6A4F !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            
+            .card-title, .chart-title {
+                color: #1B4332 !important;
+            }
+            
+            .condition-label {
+                color: #2D6A4F !important;
+            }
+            
+            .condition-value {
+                color: #1B4332 !important;
+            }
+        }
+        
+        /* ====================
+           INSIGHTS CONTAINER
+           ==================== */
+        
+        .insights-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .insight-card {
+            background: linear-gradient(135deg, rgba(93, 64, 55, 0.6) 0%, rgba(62, 39, 35, 0.5) 100%);
+            border-radius: 12px;
+            padding: 16px;
+            border: 2px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(62, 39, 35, 0.05) 10px,
+                rgba(62, 39, 35, 0.05) 20px
+            );
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .insight-card-title {
+            font-size: 0.8rem;
+            color: #A1887F;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .insight-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFFDD0;
+            margin-bottom: 4px;
+            position: relative;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        
+        .insight-card-comparison {
+            font-size: 0.9rem;
+            color: #D4AF37;
+            position: relative;
+        }
+        
+        .insight-card-trend {
+            display: inline-block;
+            margin-right: 6px;
+            font-size: 1.2rem;
+        }
+        
+        .trend-up {
+            color: #52B788;
+        }
+        
+        .trend-down {
+            color: #E76F51;
+        }
+        
+        .trend-neutral {
+            color: #D4AF37;
+        }
+        
+        @media (max-width: 768px) {
+            .insights-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .insight-card-value {
+                font-size: 1.6rem;
+            }
+        }
+        
+        /* ====================
+           TRIP PLANNING SECTION
+           ==================== */
+        
+        .driving-form {
+            background: rgba(27, 67, 50, 0.5);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(82, 183, 136, 0.2);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-size: 0.7rem;
+            color: #B8860B;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+        
+        .form-input {
+            background: rgba(93, 64, 55, 0.4);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #F5F5DC;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(212, 175, 55, 0.6);
+            background: rgba(93, 64, 55, 0.6);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+        }
+        
+        .form-input::placeholder {
+            color: #A1887F;
+        }
+        
+        .autocomplete-suggestions {
+            position: absolute;
+            background: rgba(62, 39, 35, 0.95);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+        }
+        
+        .autocomplete-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            color: #F5F5DC;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+        
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        
+        .autocomplete-item:hover {
+            background: rgba(212, 175, 55, 0.3);
+            color: #FFFDD0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #40916C 0%, #2D6A4F 100%);
+            border: 2px solid rgba(82, 183, 136, 0.5);
+            border-radius: 8px;
+            padding: 12px 20px;
+            color: #FFFDD0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #52B788 0%, #40916C 100%);
+            border-color: rgba(82, 183, 136, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            border: 2px solid rgba(212, 175, 55, 0.5);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #CD853F 0%, #D4AF37 100%);
+            border-color: rgba(212, 175, 55, 0.8);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .driving-results {
+            display: none;
+        }
+        
+        .driving-results.visible {
+            display: block;
+        }
+        
+        .result-main {
+            background: rgba(45, 106, 79, 0.3);
+            border: 2px solid rgba(82, 183, 136, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .result-primary {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        
+        .result-time {
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: #D4AF37;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .result-label {
+            font-size: 0.75rem;
+            color: #B8860B;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .traffic-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .traffic-light {
+            background: rgba(82, 183, 136, 0.3);
+            color: #52B788;
+            border: 2px solid rgba(82, 183, 136, 0.5);
+        }
+        
+        .traffic-moderate {
+            background: rgba(212, 175, 55, 0.3);
+            color: #D4AF37;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+        }
+        
+        .traffic-heavy {
+            background: rgba(205, 133, 63, 0.3);
+            color: #CD853F;
+            border: 2px solid rgba(205, 133, 63, 0.5);
+        }
+        
+        .result-details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding-top: 14px;
+            border-top: 2px solid rgba(82, 183, 136, 0.2);
+        }
+        
+        .result-detail-item {
+            text-align: center;
+        }
+        
+        .result-detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #D4AF37;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .result-detail-label {
+            font-size: 0.7rem;
+            color: #B8860B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .result-recommendations {
+            background: rgba(27, 67, 50, 0.4);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(82, 183, 136, 0.2);
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        
+        .recommendation-item:last-child {
+            border-bottom: none;
+        }
+        
+        .recommendation-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        
+        .recommendation-content {
+            flex: 1;
+        }
+        
+        .recommendation-title {
+            font-weight: 600;
+            color: #D4AF37;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .recommendation-text {
+            color: #F5F5DC;
+            font-size: 0.85rem;
+        }
+        
+        .demo-notice {
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: #D4AF37;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        /* Road Conditions */
+        .alert-banner {
+            background: rgba(205, 133, 63, 0.25);
+            border-left: 4px solid #CD853F;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .alert-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            color: #D4AF37;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .alert-text {
+            color: #F5F5DC;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        
+        .roads-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .road-card {
+            background: rgba(27, 67, 50, 0.5);
+            border-radius: 12px;
+            padding: 14px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .road-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .road-card.status-good {
+            border-left-color: #52B788;
+            background: rgba(45, 106, 79, 0.3);
+        }
+        
+        .road-card.status-caution {
+            border-left-color: #D4AF37;
+            background: rgba(212, 175, 55, 0.15);
+        }
+        
+        .road-card.status-hazardous {
+            border-left-color: #CD853F;
+            background: rgba(205, 133, 63, 0.15);
+        }
+        
+        .road-card.status-closed {
+            border-left-color: #A1887F;
+            opacity: 0.7;
+        }
+        
+        .road-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+        
+        .road-name-section {
+            flex: 1;
+        }
+        
+        .road-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #FFFDD0;
+            margin-bottom: 2px;
+        }
+        
+        .road-description {
+            font-size: 0.7rem;
+            color: #A1887F;
+            font-style: italic;
+        }
+        
+        .road-status-badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .road-status-badge.good {
+            background: rgba(82, 183, 136, 0.3);
+            color: #52B788;
+            border: 2px solid rgba(82, 183, 136, 0.5);
+        }
+        
+        .road-status-badge.caution {
+            background: rgba(212, 175, 55, 0.3);
+            color: #D4AF37;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+        }
+        
+        .road-status-badge.hazardous {
+            background: rgba(205, 133, 63, 0.3);
+            color: #CD853F;
+            border: 2px solid rgba(205, 133, 63, 0.5);
+        }
+        
+        .road-status-badge.closed {
+            background: rgba(161, 136, 127, 0.3);
+            color: #A1887F;
+            border: 2px solid rgba(161, 136, 127, 0.5);
+        }
+        
+        .road-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .road-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .detail-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        
+        .detail-content {
+            flex: 1;
+        }
+        
+        .detail-label {
+            font-size: 0.7rem;
+            color: #B8860B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        
+        .detail-value {
+            font-size: 0.85rem;
+            color: #F5F5DC;
+            font-weight: 500;
+        }
+        
+        .road-advisories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        
+        .advisory-tag {
+            padding: 4px 10px;
+            background: rgba(205, 133, 63, 0.25);
+            border: 2px solid rgba(205, 133, 63, 0.4);
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: #CD853F;
+            font-weight: 600;
+        }
+        
+        .road-traffic {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: rgba(93, 64, 55, 0.4);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #F5F5DC;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        /* ====================
+           WEATHER SECTION
+           ==================== */
+        
+        .weather-report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .weather-report-date {
+            font-size: 0.75rem;
+            color: #A1887F;
+            font-style: italic;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        
+        .weather-report-content {
+            background: rgba(27, 67, 50, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            line-height: 1.7;
+            color: #F5F5DC;
+            font-size: 0.9rem;
+            border-left: 4px solid rgba(212, 175, 55, 0.5);
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .weather-summary {
+            margin-bottom: 14px;
+        }
+        
+        .read-more-link {
+            display: inline-block;
+            color: #52B788;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .read-more-link:hover {
+            color: #40916C;
+            text-decoration: underline;
+            transform: translateX(4px);
+        }
+        
+        /* ====================
+           COMMUNITY SECTION
+           ==================== */
+        
+        .reddit-posts-grid {
+            display: grid;
+            gap: 14px;
+        }
+        
+        .reddit-post-card {
+            background: rgba(27, 67, 50, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid rgba(212, 175, 55, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .reddit-post-card:hover {
+            transform: translateX(6px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+            background: rgba(27, 67, 50, 0.5);
+            border-left-color: rgba(212, 175, 55, 0.8);
+        }
+        
+        .reddit-post-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #FFFDD0;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .reddit-post-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .reddit-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #A1887F;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .reddit-meta-icon {
+            font-size: 1rem;
+        }
+        
+        .reddit-upvotes {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+        
+        .reddit-post-preview {
+            color: #F5F5DC;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .reddit-post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .reddit-author {
+            font-size: 0.8rem;
+            color: #B8860B;
+            font-weight: 500;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .reddit-time {
+            font-size: 0.8rem;
+            color: #A1887F;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        /* ====================
+           UTILITIES
+           ==================== */
+        
+        .loading {
+            text-align: center;
+            padding: 24px;
+            color: #A1887F;
+            font-size: 0.85rem;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top: 3px solid #D4AF37;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 12px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #A1887F;
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        
+        .empty-state-text {
+            font-size: 0.9rem;
+        }
+        
+        /* ====================
+           RESPONSIVE
+           ==================== */
+        
+        @media (max-width: 767px) {
+            .nav-container {
+                display: none;
+            }
+            
+            .bottom-nav {
+                display: block;
+            }
+            
+            .app-container {
+                padding-top: 12px;
+                padding-bottom: 80px;
+            }
+            
+            .conditions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .result-time {
+                font-size: 2rem;
+            }
+            
+            .export-buttons {
+                position: absolute;
+                top: 16px;
+                right: 12px;
+            }
+            
+            .export-btn {
+                font-size: 0.85rem;
+                padding: 6px;
+                opacity: 0.7;
+            }
+            
+            .export-btn:active {
+                opacity: 1;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-description {
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .conditions-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .roads-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .roads-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* ====================
+           ROAMING SQUIRREL EASTER EGG
+           ==================== */
+        
+        .roaming-squirrel {
+            position: fixed;
+            font-size: 2.5rem;
+            z-index: 9999;
+            cursor: pointer;
+            user-select: none;
+            animation: scurryAcross 8s ease-in-out forwards;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+        }
+        
+        .roaming-squirrel:hover {
+            animation-play-state: paused;
+            transform: scale(1.3);
+            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8));
+        }
+        
+        .roaming-squirrel-paw {
+            position: absolute;
+            font-size: 0.6rem;
+            opacity: 0.6;
+            color: #A1887F;
+            animation: pawFade 1.5s ease-out forwards;
+        }
+        
+        @keyframes scurryAcross {
+            0% {
+                left: -50px;
+                top: 30%;
+                transform: scaleX(1) scaleY(1);
+            }
+            50% {
+                top: 28%;
+            }
+            100% {
+                left: calc(100vw + 50px);
+                top: 32%;
+                transform: scaleX(-1) scaleY(1);
+            }
+        }
+        
+        @keyframes pawFade {
+            0% {
+                opacity: 0.6;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+        
+        @keyframes squirrelBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splashScreen">
+        <div class="splash-content">
+            <div class="splash-icon">⛷️</div>
+            <h1 class="splash-title">Hood Meadows<br>Ski Dashboard</h1>
+            <p class="splash-tagline">"Where Every Run Begins"</p>
+            <div class="splash-divider"></div>
+            <p class="splash-credits">Created by Bryant & CLAWUNiT 🎨</p>
+            <div class="splash-version" onclick="triggerEasterEgg(event)" style="font-size: 2.5rem; cursor: pointer; animation: splashIconFloat 2s ease-in-out infinite; padding: 12px 24px; background: none; border: none;">🐿️</div>
+        </div>
+        <div class="splash-skip" onclick="skipSplash()">Press ESC or click to continue ➜</div>
+    </div>
+    
+    <canvas id="snowCanvas"></canvas>
+    
+    <!-- Top Navigation (Desktop) -->
+    <nav class="nav-container">
+        <div class="nav-header">
+            <h1 class="nav-title">
+                ⛷️ Hood Meadows
+                <span class="easter-egg-squirrel" onclick="triggerEasterEgg(event)" title="Click me for a surprise! 🐿️">🐿️</span>
+            </h1>
+            <p class="nav-subtitle">Ski Conditions Dashboard</p>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-section="dashboard">
+                <span class="nav-tab-icon">🏂</span>
+                <span class="nav-tab-label">The Conditions</span>
+            </button>
+            <button class="nav-tab" data-section="trends">
+                <span class="nav-tab-icon">📈</span>
+                <span class="nav-tab-label">Season Stories</span>
+            </button>
+            <button class="nav-tab" data-section="trip-planning">
+                <span class="nav-tab-icon">🚗</span>
+                <span class="nav-tab-label">Journey Plan</span>
+            </button>
+            <button class="nav-tab" data-section="weather">
+                <span class="nav-tab-icon">📋</span>
+                <span class="nav-tab-label">Mountain Report</span>
+            </button>
+            <button class="nav-tab" data-section="community">
+                <span class="nav-tab-icon">🏔️</span>
+                <span class="nav-tab-label">The Gathering</span>
+            </button>
+            <button class="nav-tab" data-section="gear">
+                <span class="nav-tab-icon">🎿</span>
+                <span class="nav-tab-label">Pack Smart</span>
+            </button>
+            <button class="nav-tab" data-section="about">
+                <span class="nav-tab-icon">🏔️</span>
+                <span class="nav-tab-label">The Lodge</span>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-tabs">
+            <button class="bottom-nav-tab active" data-section="dashboard">
+                <span class="bottom-nav-tab-icon">🏂</span>
+                <span class="bottom-nav-tab-label">Conditions</span>
+            </button>
+            <button class="bottom-nav-tab" data-section="trends">
+                <span class="bottom-nav-tab-icon">📈</span>
+                <span class="bottom-nav-tab-label">Stories</span>
+            </button>
+            <button class="bottom-nav-tab" data-section="trip-planning">
+                <span class="bottom-nav-tab-icon">🚗</span>
+                <span class="bottom-nav-tab-label">Journey</span>
+            </button>
+            <button class="bottom-nav-tab" data-section="weather">
+                <span class="bottom-nav-tab-icon">📋</span>
+                <span class="bottom-nav-tab-label">Report</span>
+            </button>
+            <button class="bottom-nav-tab" data-section="community">
+                <span class="bottom-nav-tab-icon">🏔️</span>
+                <span class="bottom-nav-tab-label">Gathering</span>
+            </button>
+            <button class="bottom-nav-tab" data-section="gear">
+                <span class="bottom-nav-tab-icon">🎿</span>
+                <span class="bottom-nav-tab-label">Pack</span>
+            </button>
+            <button class="bottom-nav-tab" data-section="about">
+                <span class="bottom-nav-tab-icon">🏔️</span>
+                <span class="bottom-nav-tab-label">Lodge</span>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- App Container -->
+    <div class="app-container">
+        <div class="container">
+            <!-- ====================
+                 DASHBOARD SECTION
+                 ==================== -->
+            <section id="dashboard-section" class="section active">
+                <div class="section-header">
+                    <h2 class="section-title">🏂 THE CONDITIONS</h2>
+                    <p class="section-description">What matters most, right now</p>
+                    <div class="export-buttons">
+                        <button class="export-btn" onclick="printSection('dashboard-section')" title="Print">🖨️</button>
+                        <button class="export-btn" onclick="copySection('dashboard-section')" title="Copy">📋</button>
+                    </div>
+                    <p class="last-updated" id="lastUpdated">Loading...</p>
+                </div>
+                
+                <!-- Quick Conditions Grid -->
+                <div class="conditions-grid" id="conditionsGrid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading conditions...</p>
+                    </div>
+                </div>
+                
+                <!-- Snowfall Chart -->
+                <div class="chart-container">
+                    <h2 class="chart-title">📊 Snowfall History</h2>
+                    <canvas id="snowfallChart"></canvas>
+                </div>
+            </section>
+            
+            <!-- ====================
+                 TRENDS & HISTORY SECTION
+                 ==================== -->
+            <section id="trends-section" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📈 Season Stories</h2>
+                    <p class="section-description">The mountain remembers every winter</p>
+                    <div class="export-buttons">
+                        <button class="export-btn" onclick="printSection('trends-section')" title="Print">🖨️</button>
+                        <button class="export-btn" onclick="copySection('trends-section')" title="Copy">📋</button>
+                    </div>
+                </div>
+                
+                <!-- Insight Cards -->
+                <div class="insights-container" id="insightsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading insights...</p>
+                    </div>
+                </div>
+                
+                <!-- Year-Over-Year Comparison Chart -->
+                <div class="chart-container">
+                    <h2 class="chart-title">📊 Year-Over-Year Comparison</h2>
+                    <p class="chart-subtitle">Cumulative snowfall by water year (Oct 1 - Sep 30)</p>
+                    <canvas id="yearOverYearChart"></canvas>
+                </div>
+                
+                <!-- Snow Depth Comparison Chart -->
+                <div class="chart-container">
+                    <h2 class="chart-title">⛷️ Snow Depth Comparison</h2>
+                    <p class="chart-subtitle">Current snow depth at Mt Hood Test Site (5380 ft)</p>
+                    <canvas id="snowDepthChart"></canvas>
+                </div>
+            </section>
+            
+            <!-- ====================
+                 TRIP PLANNING SECTION
+                 ==================== -->
+            <section id="trip-planning-section" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🚗 Journey Planning</h2>
+                    <p class="section-description">Every great run begins with the drive</p>
+                    <div class="export-buttons">
+                        <button class="export-btn" onclick="printSection('trip-planning-section')" title="Print">🖨️</button>
+                        <button class="export-btn" onclick="copySection('trip-planning-section')" title="Copy">📋</button>
+                    </div>
+                </div>
+                
+                <!-- Driving Time Estimator -->
+                <div class="card">
+                    <h3 class="card-title">Driving Time Estimator</h3>
+                    
+                    <div class="driving-form">
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label class="form-label">Starting Address</label>
+                                <input 
+                                    type="text" 
+                                    id="originInput" 
+                                    class="form-input" 
+                                    placeholder="Portland, OR"
+                                    autocomplete="off"
+                                />
+                                <div id="autocompleteSuggestions" class="autocomplete-suggestions" style="display: none;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Date</label>
+                                <input 
+                                    type="date" 
+                                    id="dateInput" 
+                                    class="form-input"
+                                />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Time</label>
+                                <input 
+                                    type="time" 
+                                    id="timeInput" 
+                                    class="form-input"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button class="btn" id="calculateBtn" onclick="calculateDrivingTime()">
+                                Calculate
+                            </button>
+                            <button class="btn btn-secondary" onclick="setCurrentTime()">
+                                Leave Now
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="driving-results" id="drivingResults">
+                        <div class="result-main">
+                            <div class="result-primary">
+                                <div class="result-time" id="resultTime">1h 30m</div>
+                                <div class="result-label">Estimated Drive Time</div>
+                                <div class="traffic-indicator traffic-light" id="trafficIndicator">
+                                    <span>●</span>
+                                    <span>Light Traffic</span>
+                                </div>
+                            </div>
+                            
+                            <div class="result-details-grid">
+                                <div class="result-detail-item">
+                                    <div class="result-detail-value" id="resultDistance">65 mi</div>
+                                    <div class="result-detail-label">Distance</div>
+                                </div>
+                                <div class="result-detail-item">
+                                    <div class="result-detail-value" id="resultArrival">9:30 AM</div>
+                                    <div class="result-detail-label">Arrival</div>
+                                </div>
+                                <div class="result-detail-item">
+                                    <div class="result-detail-value" id="resultRoute">I-84 E</div>
+                                    <div class="result-detail-label">Route</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="result-recommendations">
+                            <div class="recommendation-item" id="recommendedDeparture">
+                                <div class="recommendation-icon">⏰</div>
+                                <div class="recommendation-content">
+                                    <div class="recommendation-title">Recommended Departure</div>
+                                    <div class="recommendation-text">Leave at 6:30 AM to arrive by 8:00 AM</div>
+                                </div>
+                            </div>
+                            
+                            <div class="recommendation-item" id="roadWarning" style="display: none;">
+                                <div class="recommendation-icon">⚠️</div>
+                                <div class="recommendation-content">
+                                    <div class="recommendation-title">Road Advisory</div>
+                                    <div class="recommendation-text">Check current conditions</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-notice" id="demoNotice" style="display: none;">
+                            ℹ️ Demo mode - simulated traffic data
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Road Conditions -->
+                <div class="card">
+                    <div class="weather-report-header">
+                        <h3 class="card-title">Road Conditions</h3>
+                        <span class="weather-report-date" id="roadUpdated">Loading...</span>
+                    </div>
+                    
+                    <div id="alertBanners"></div>
+                    
+                    <div class="roads-grid" id="roadsGrid">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading roads...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ====================
+                 WEATHER SECTION
+                 ==================== -->
+            <section id="weather-section" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📋 Mountain Report</h2>
+                    <p class="section-description">What the mountain has to say today</p>
+                    <div class="export-buttons">
+                        <button class="export-btn" onclick="printSection('weather-section')" title="Print">🖨️</button>
+                        <button class="export-btn" onclick="copySection('weather-section')" title="Copy">📋</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="weather-report-header">
+                        <h3 class="card-title">Daily Report</h3>
+                        <span class="weather-report-date" id="reportDate">Loading...</span>
+                    </div>
+                    <div class="weather-report-content" id="weatherReportContent">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading weather report...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ====================
+                 COMMUNITY SECTION
+                 ==================== -->
+            <section id="community-section" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🏔️ The Gathering</h2>
+                    <p class="section-description">Voices from the slopes</p>
+                    <div class="export-buttons">
+                        <button class="export-btn" onclick="printSection('community-section')" title="Print">🖨️</button>
+                        <button class="export-btn" onclick="copySection('community-section')" title="Copy">📋</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="weather-report-header">
+                        <h3 class="card-title">Recent Discussions</h3>
+                        <span class="weather-report-date" id="redditUpdated">Loading...</span>
+                    </div>
+                    
+                    <div class="reddit-posts-grid" id="redditPostsGrid">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading community posts...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ====================
+                 GEAR SECTION
+                 ==================== -->
+            <section id="gear-section" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🎿 Pack Smart</h2>
+                    <p class="section-description">Everything you need for the mountain</p>
+                </div>
+                
+                <div class="card">
+                    <div style="text-align: center; padding: 20px;">
+                        <p style="margin-bottom: 16px; font-size: 0.95rem;">Your ski gear checklist is on a dedicated page.</p>
+                        <a href="/checklist.html" class="btn" style="display: inline-block; text-decoration: none;">
+                            🎿 Open Gear Checklist
+                        </a>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ====================
+                 ABOUT SECTION - THE LODGE
+                 ==================== -->
+            <section id="about-section" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🏔️ THE LODGE</h2>
+                    <p class="section-description">Where mountains meet data, and passion fuels every pixel</p>
+                </div>
+                
+                <!-- Hero Banner -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(93, 64, 55, 0.8) 0%, rgba(62, 39, 35, 0.7) 100%); border: 3px solid rgba(212, 175, 55, 0.4); padding: 32px 24px; margin-bottom: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 16px; animation: splashIconFloat 3s ease-in-out infinite;">⛷️</div>
+                        <h1 style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.8rem; color: #FFFDD0; margin-bottom: 16px; font-weight: 700; letter-spacing: 1px; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);">
+                            Where Every Run Begins
+                        </h1>
+                        <p style="font-family: 'Playfair Display', Georgia, serif; font-size: 0.9rem; color: #D4AF37; font-style: italic; line-height: 1.8; max-width: 700px; margin: 0 auto; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);">
+                            Born from a love of Hood Meadows and a passion for elegant, data-driven design—this dashboard is your digital basecamp for planning the perfect day on the slopes. Where the timeless warmth of a mountain lodge meets the precision of real-time weather systems.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- The Story -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3 class="card-title" style="font-size: 1.3rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.8rem;">📖</span>
+                        Our Story
+                    </h3>
+                    <div style="color: #F5F5DC; font-size: 0.9rem; line-height: 1.9; position: relative;">
+                        <p style="margin-bottom: 20px;">
+                            Every great ski day starts with the right conditions—and the right gear. But more than that, it begins with <em style="color: #D4AF37;">anticipation</em>. That electric feeling when you check the snow report at dawn, when the mountain whispers promises of fresh powder and bluebird skies.
+                        </p>
+                        <p style="margin-bottom: 20px;">
+                            This dashboard puts that story in your pocket—from fresh powder alerts to trail conditions, lift status to gear prep. Whether you're a first-chair chaser racing to beat the crowds, or an après aficionado savoring the mountain's golden hour, we've woven every detail into a tapestry of data and design.
+                        </p>
+                        <p style="margin-bottom: 0; font-family: 'Playfair Display', Georgia, serif; font-style: italic; color: #D4AF37; font-size: 0.9rem;">
+                            "Data-driven doesn't have to mean cold and technical. By blending real-time weather systems with thoughtful UI design, we've created a tool that's both powerful and pleasant—a digital companion that respects your time and enhances your mountain experience."
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- The Team -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3 class="card-title" style="font-size: 1.3rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.8rem;">🎨</span>
+                        The Summit Team
+                    </h3>
+                    
+                    <div style="display: grid; gap: 20px;">
+                        <!-- Bryant -->
+                        <div style="background: linear-gradient(135deg, rgba(45, 106, 79, 0.3) 0%, rgba(27, 67, 50, 0.3) 100%); border-left: 5px solid #D4AF37; border-radius: 12px; padding: 24px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                                <div style="font-size: 2.5rem;">🎭</div>
+                                <div>
+                                    <h4 style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.2rem; color: #FFFDD0; margin-bottom: 4px; font-weight: 700;">Bryant</h4>
+                                    <p style="color: #D4AF37; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Visionary & Designer</p>
+                                </div>
+                            </div>
+                            <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.8;">
+                                The architect of this digital ski lodge, Bryant dreamed up every detail—from the forest greens to the golden accents, from the wood grain textures to the cozy card layouts. With an artist's eye and a skier's heart, Bryant ensures the dashboard feels like home after a long day carving fresh lines down the mountain. Every pixel, every gradient, every shadow is crafted to capture that ineffable warmth of a crackling fireplace and the quiet hum of snow falling outside the lodge windows.
+                            </p>
+                        </div>
+                        
+                        <!-- CLAWUNiT -->
+                        <div style="background: linear-gradient(135deg, rgba(45, 106, 79, 0.3) 0%, rgba(27, 67, 50, 0.3) 100%); border-left: 5px solid #52B788; border-radius: 12px; padding: 24px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                                <div style="font-size: 2.5rem;">🤖</div>
+                                <div>
+                                    <h4 style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.2rem; color: #FFFDD0; margin-bottom: 4px; font-weight: 700;">CLAWUNiT</h4>
+                                    <p style="color: #52B788; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Builder & Technical Architect</p>
+                                </div>
+                            </div>
+                            <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.8;">
+                                The technical backbone of the operation, CLAWUNiT transforms visions into living, breathing reality. From real-time weather APIs to interactive charts, from mobile-responsive layouts to smooth animations—CLAWUNiT makes the data dance and the features flow. With a builder's precision and a coder's passion, every function is optimized, every API call is elegant, and the code stays as clean as fresh corduroy on opening day. If Bryant paints the dream, CLAWUNiT builds the mountain.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Why We Built This -->
+                <div class="card" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(82, 183, 136, 0.2) 0%, rgba(45, 106, 79, 0.2) 100%); border: 3px solid rgba(82, 183, 136, 0.3);">
+                    <h3 class="card-title" style="font-size: 1.3rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.8rem;">🏔️</span>
+                        Why We Built This
+                    </h3>
+                    <div style="color: #F5F5DC; font-size: 0.9rem; line-height: 1.9;">
+                        <p style="margin-bottom: 20px;">
+                            This dashboard is inspired by the timeless elegance of mountain lodges—warm wood tones, crackling fireplaces, and the stories shared over hot chocolate. We believe <strong style="color: #D4AF37;">great design should feel as natural as the mountain itself</strong>: intuitive, inviting, and always in tune with conditions.
+                        </p>
+                        <p style="margin-bottom: 20px;">
+                            Too often, ski condition dashboards are cluttered, cold, or buried in ads. We wanted something <em style="color: #D4AF37;">different</em>—something that honors the mountain, respects your time, and genuinely enhances the experience. A place where you can check conditions, plan your drive, pack your gear, and feel the excitement building with every click.
+                        </p>
+                        <p style="margin-bottom: 0; font-size: 0.95rem; font-family: 'Playfair Display', Georgia, serif; color: #D4AF37; font-weight: 600; text-align: center; padding: 20px; background: rgba(27, 67, 50, 0.4); border-radius: 12px; border: 2px solid rgba(212, 175, 55, 0.3);">
+                            "Because every pixel should serve the mountain—and every feature should serve the skier."
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Tech Stack -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3 class="card-title" style="font-size: 1.3rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.8rem;">⚙️</span>
+                        Built at Basecamp
+                    </h3>
+                    <p style="color: #A1887F; font-size: 0.85rem; margin-bottom: 24px; font-style: italic;">
+                        The tools and technologies that power your mountain experience
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <!-- Frontend -->
+                        <div style="background: rgba(27, 67, 50, 0.5); padding: 20px; border-radius: 12px; border: 2px solid rgba(212, 175, 55, 0.2);">
+                            <h4 style="color: #D4AF37; font-size: 0.95rem; margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.2rem;">🎨</span>
+                                Frontend Trail
+                            </h4>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    HTML5
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    CSS3 + Animations
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Vanilla JavaScript
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Canvas API (Snow!)
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Charts & Viz -->
+                        <div style="background: rgba(27, 67, 50, 0.5); padding: 20px; border-radius: 12px; border: 2px solid rgba(212, 175, 55, 0.2);">
+                            <h4 style="color: #D4AF37; font-size: 0.95rem; margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.2rem;">📊</span>
+                                Data Peak
+                            </h4>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Chart.js
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Real-time Updates
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Historical Trends
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Backend -->
+                        <div style="background: rgba(27, 67, 50, 0.5); padding: 20px; border-radius: 12px; border: 2px solid rgba(212, 175, 55, 0.2);">
+                            <h4 style="color: #D4AF37; font-size: 0.95rem; margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.2rem;">🖥️</span>
+                                Backend Ridge
+                            </h4>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Node.js
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Express.js
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    REST APIs
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Data Sources -->
+                        <div style="background: rgba(27, 67, 50, 0.5); padding: 20px; border-radius: 12px; border: 2px solid rgba(212, 175, 55, 0.2);">
+                            <h4 style="color: #D4AF37; font-size: 0.95rem; margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.2rem;">🔌</span>
+                                Data Summit
+                            </h4>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    SNOTEL Weather
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Google Maps API
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Reddit API
+                                </li>
+                                <li style="color: #F5F5DC; padding: 4px 0; padding-left: 20px; position: relative; font-size: 0.8rem;">
+                                    <span style="position: absolute; left: 0; color: #52B788;">▸</span>
+                                    Local Network
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Features Showcase -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3 class="card-title" style="font-size: 1.3rem; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.8rem;">✨</span>
+                        Trail Map of Features
+                    </h3>
+                    
+                    <div style="display: grid; gap: 14px;">
+                        <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: rgba(27, 67, 50, 0.3); border-radius: 10px; border-left: 4px solid #52B788;">
+                            <span style="font-size: 1.6rem; flex-shrink: 0;">❄️</span>
+                            <div>
+                                <h4 style="color: #D4AF37; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">Real-Time Weather Data</h4>
+                                <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.7;">Live snow conditions from SNOTEL weather stations—know exactly what's falling before you even leave the house.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: rgba(27, 67, 50, 0.3); border-radius: 10px; border-left: 4px solid #52B788;">
+                            <span style="font-size: 1.6rem; flex-shrink: 0;">📊</span>
+                            <div>
+                                <h4 style="color: #D4AF37; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">Season Stories & Trends</h4>
+                                <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.7;">Year-over-year snowfall comparisons, historical trends, and insights that help you understand this season's story.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: rgba(27, 67, 50, 0.3); border-radius: 10px; border-left: 4px solid #52B788;">
+                            <span style="font-size: 1.6rem; flex-shrink: 0;">🚗</span>
+                            <div>
+                                <h4 style="color: #D4AF37; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">Journey Planning</h4>
+                                <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.7;">Driving time estimates with live traffic, road condition alerts, and smart departure recommendations.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: rgba(27, 67, 50, 0.3); border-radius: 10px; border-left: 4px solid #52B788;">
+                            <span style="font-size: 1.6rem; flex-shrink: 0;">🎿</span>
+                            <div>
+                                <h4 style="color: #D4AF37; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">Interactive Gear Checklist</h4>
+                                <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.7;">Never forget your goggles (or snacks) again—customizable, persistent, and beautifully designed.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: rgba(27, 67, 50, 0.3); border-radius: 10px; border-left: 4px solid #52B788;">
+                            <span style="font-size: 1.6rem; flex-shrink: 0;">🏔️</span>
+                            <div>
+                                <h4 style="color: #D4AF37; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">Community Voices</h4>
+                                <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.7;">Fresh reports from Reddit and local riders—see what people are saying about current conditions.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: rgba(27, 67, 50, 0.3); border-radius: 10px; border-left: 4px solid #52B788;">
+                            <span style="font-size: 1.6rem; flex-shrink: 0;">📱</span>
+                            <div>
+                                <h4 style="color: #D4AF37; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">Fully Responsive Design</h4>
+                                <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.7;">Perfect on your phone, tablet, or desktop—check conditions from anywhere, anytime.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: rgba(27, 67, 50, 0.3); border-radius: 10px; border-left: 4px solid #52B788;">
+                            <span style="font-size: 1.6rem; flex-shrink: 0;">🔥</span>
+                            <div>
+                                <h4 style="color: #D4AF37; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem;">Timberline Lodge Aesthetic</h4>
+                                <p style="color: #F5F5DC; font-size: 0.85rem; line-height: 1.7;">Warm wood tones, forest greens, and golden accents—every detail crafted to feel like home.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer / Version -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(62, 39, 35, 0.8) 0%, rgba(93, 64, 55, 0.6) 100%); border: 2px solid rgba(212, 175, 55, 0.3); text-align: center; padding: 28px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+                        <div style="display: inline-block; background: linear-gradient(135deg, #52B788 0%, #40916C 100%); color: #FFFDD0; padding: 8px 20px; border-radius: 24px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 6px 20px rgba(82, 183, 136, 0.4); border: 2px solid rgba(212, 175, 55, 0.3);">
+                            Version 2.0
+                        </div>
+                        <p style="font-family: 'Playfair Display', Georgia, serif; color: #D4AF37; font-size: 1.1rem; font-style: italic; font-weight: 600; letter-spacing: 0.5px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);">
+                            Crafted with ❄️ for the mountains
+                        </p>
+                        <div style="width: 80px; height: 3px; background: linear-gradient(90deg, transparent, #D4AF37, transparent); border-radius: 2px;"></div>
+                        <p style="color: #A1887F; font-size: 0.8rem; max-width: 600px; line-height: 1.7;">
+                            Hood Meadows Ski Dashboard • Where mountains meet data • Built by Bryant & CLAWUNiT • Open-source and community-driven
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        // ====================
+        // SPLASH SCREEN LOGIC
+        // ====================
+        
+        // Global splash control
+        let splashAutoHideTimer = null;
+        let isEasterEggMode = false;
+        
+        // Create snowflakes for splash screen
+        function createSplashSnowflakes(container) {
+            const numFlakes = 30;
+            for (let i = 0; i < numFlakes; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('splash-snowflake');
+                snowflake.textContent = '❄';
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                snowflake.style.fontSize = (Math.random() * 0.5 + 0.5) + 'rem';
+                container.appendChild(snowflake);
+            }
+        }
+        
+        // Show splash screen (for Easter egg)
+        window.showSplash = function() {
+            if (isEasterEggMode) return; // Prevent multiple triggers
+            
+            isEasterEggMode = true;
+            
+            // Re-create splash if needed
+            let splash = document.getElementById('splashScreen');
+            if (!splash) {
+                splash = document.createElement('div');
+                splash.id = 'splashScreen';
+                splash.innerHTML = `
+                    <div class="splash-content">
+                        <div class="splash-icon">⛷️</div>
+                        <h1 class="splash-title">Hood Meadows<br>Ski Dashboard</h1>
+                        <p class="splash-tagline">"Where Every Run Begins"</p>
+                        <div class="splash-divider"></div>
+                        <p class="splash-credits">Created by Bryant & CLAWUNiT 🎨</p>
+                        <div class="splash-version" onclick="triggerEasterEgg(event)">Version 2.0</div>
+                    </div>
+                    <div class="splash-skip" onclick="skipSplash()">Press ESC or click to continue ➜</div>
+                `;
+                document.body.insertBefore(splash, document.body.firstChild);
+                createSplashSnowflakes(splash);
+            } else {
+                splash.classList.remove('hidden');
+            }
+            
+            // Force reflow for animation
+            void splash.offsetWidth;
+            
+            // Trigger blizzard mode
+            triggerBlizzardMode();
+            
+            // Auto-hide after 7 seconds
+            if (splashAutoHideTimer) clearTimeout(splashAutoHideTimer);
+            splashAutoHideTimer = setTimeout(() => {
+                hideSplash();
+                isEasterEggMode = false;
+            }, 7000);
+            
+            // Setup event listeners for this showing
+            setupSplashEventListeners();
+        };
+        
+        // Hide splash screen with smooth fade
+        function hideSplash() {
+            const splash = document.getElementById('splashScreen');
+            if (!splash) return;
+            
+            splash.classList.add('hidden');
+            if (!isEasterEggMode) {
+                sessionStorage.setItem('hasSeenSplash', 'true');
+            }
+            
+            // Remove from DOM after transition
+            setTimeout(() => {
+                if (splash.parentNode) {
+                    splash.remove();
+                }
+            }, 800);
+            
+            // Clear timer
+            if (splashAutoHideTimer) {
+                clearTimeout(splashAutoHideTimer);
+                splashAutoHideTimer = null;
+            }
+        }
+        
+        // Setup event listeners for splash interactions
+        function setupSplashEventListeners() {
+            // ESC key to close
+            function handleKeyPress(e) {
+                if (e.key === 'Escape' || e.key === 'Esc') {
+                    if (splashAutoHideTimer) clearTimeout(splashAutoHideTimer);
+                    hideSplash();
+                    isEasterEggMode = false;
+                    document.removeEventListener('keydown', handleKeyPress);
+                }
+            }
+            
+            // Click anywhere on splash to close
+            function handleClick(e) {
+                if (e.target.closest('#splashScreen') && !e.target.closest('.splash-version')) {
+                    if (splashAutoHideTimer) clearTimeout(splashAutoHideTimer);
+                    hideSplash();
+                    isEasterEggMode = false;
+                    document.removeEventListener('click', handleClick);
+                }
+            }
+            
+            document.addEventListener('keydown', handleKeyPress);
+            document.addEventListener('click', handleClick);
+        }
+        
+        // Skip splash screen immediately
+        window.skipSplash = function() {
+            if (splashAutoHideTimer) clearTimeout(splashAutoHideTimer);
+            hideSplash();
+            isEasterEggMode = false;
+        };
+        
+        // Initialize splash screen on page load
+        (function initSplashScreen() {
+            const splashScreen = document.getElementById('splashScreen');
+            const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+            
+            // Check if user has seen splash this session
+            if (hasSeenSplash) {
+                if (splashScreen) splashScreen.remove();
+                setupEasterEggTriggers();
+                return;
+            }
+            
+            // Add snowflakes to initial splash
+            if (splashScreen) {
+                createSplashSnowflakes(splashScreen);
+            }
+            
+            // Auto-hide after 7 seconds (extended from 3.5)
+            splashAutoHideTimer = setTimeout(() => {
+                hideSplash();
+            }, 7000);
+            
+            // Setup event listeners
+            setupSplashEventListeners();
+            
+            // Setup Easter egg triggers after initial splash
+            setTimeout(setupEasterEggTriggers, 8000);
+        })();
+        
+        // ====================
+        // EASTER EGG SYSTEM
+        // ====================
+        
+        // Trigger Easter egg from version number or other sources
+        window.triggerEasterEgg = function(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            // Show splash screen again with blizzard effect
+            if (window.showSplash) {
+                window.showSplash();
+            }
+        };
+        
+        // Setup Easter egg triggers
+        function setupEasterEggTriggers() {
+            // 1. Double-click on nav title "Hood Meadows"
+            const navTitle = document.querySelector('.nav-title');
+            if (navTitle) {
+                navTitle.addEventListener('dblclick', () => {
+                    triggerEasterEgg();
+                });
+            }
+            
+            // 2. Press 'M' or '/' key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'M' || e.key === 'm' || e.key === '/') {
+                    // Only trigger if not typing in an input
+                    if (!e.target.matches('input, textarea')) {
+                        triggerEasterEgg();
+                    }
+                }
+            });
+        }
+        
+        // ====================
+        // BLIZZARD MODE (SNOWFALL PULSE)
+        // ====================
+        
+        function triggerBlizzardMode() {
+            if (!window.snowSystem) {
+                console.warn('Snow system not initialized, retrying...');
+                // Retry after a short delay
+                setTimeout(() => {
+                    if (window.snowSystem && window.snowSystem.triggerBlizzard) {
+                        window.snowSystem.triggerBlizzard(12000); // 12 second peak
+                    }
+                }, 500);
+                return;
+            }
+            
+            // Use the built-in blizzard mode
+            if (window.snowSystem.triggerBlizzard) {
+                window.snowSystem.triggerBlizzard(12000); // 12 second peak blizzard
+            }
+        }
+        
+        // ====================
+        // NAVIGATION SYSTEM
+        // ====================
+        
+        let chart = null;
+        let cachedData = {};
+        
+        // Initialize navigation
+        let currentSection = 'dashboard';
+        let isNavigating = false;
+        
+        function initNavigation() {
+            // Load saved section from localStorage
+            const savedSection = localStorage.getItem('activeSection') || 'dashboard';
+            currentSection = savedSection;
+            
+            // Set up click handlers for both desktop and mobile nav
+            document.querySelectorAll('.nav-tab, .bottom-nav-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = tab.dataset.section;
+                    if (section !== currentSection) {
+                        switchSection(section);
+                    }
+                });
+            });
+            
+            // Load saved section without updating hash
+            showSection(savedSection, false);
+        }
+        
+        // Switch between sections with smooth transition
+        function switchSection(sectionName, animate = true) {
+            if (isNavigating || sectionName === currentSection) return;
+            isNavigating = true;
+            
+            // Update hash without triggering navigation again
+            window.location.hash = sectionName;
+            
+            // Show the section
+            showSection(sectionName, animate);
+            
+            isNavigating = false;
+        }
+        
+        // Show section (separated logic from navigation)
+        function showSection(sectionName, animate = true) {
+            currentSection = sectionName;
+            
+            // Save to localStorage
+            localStorage.setItem('activeSection', sectionName);
+            
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById(`${sectionName}-section`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            } else {
+                console.warn(`[Navigation] Section not found: ${sectionName}-section`);
+                return;
+            }
+            
+            // Update active tab state (both desktop and mobile)
+            document.querySelectorAll('.nav-tab, .bottom-nav-tab').forEach(tab => {
+                if (tab.dataset.section === sectionName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: animate ? 'smooth' : 'auto' });
+            
+            // Lazy load section-specific data
+            loadSectionData(sectionName);
+        }
+        
+        // Load data for specific section
+        function loadSectionData(sectionName) {
+            console.log(`[LoadSectionData] Loading section: ${sectionName}`);
+            
+            switch(sectionName) {
+                case 'dashboard':
+                    if (!cachedData.conditions) {
+                        console.log('[LoadSectionData] Fetching dashboard conditions');
+                        fetchConditions();
+                        fetchSnowfallHistory();
+                    }
+                    break;
+                    
+                case 'trends':
+                    console.log(`[LoadSectionData] Trends - cached: ${cachedData.yearOverYear}`);
+                    // Always try to fetch trends when tab is clicked
+                    if (!cachedData.yearOverYear || !document.querySelector('#insightsContainer .insight-card')) {
+                        console.log('[LoadSectionData] Fetching year-over-year data');
+                        fetchYearOverYearData();
+                    }
+                    break;
+                    
+                case 'trip-planning':
+                    if (!cachedData.roadConditions) {
+                        console.log('[LoadSectionData] Fetching road conditions');
+                        fetchRoadConditions();
+                    }
+                    break;
+                    
+                case 'weather':
+                    if (!cachedData.weatherReport) {
+                        console.log('[LoadSectionData] Fetching weather report');
+                        fetchWeatherReport();
+                    }
+                    break;
+                    
+                case 'community':
+                    if (!cachedData.redditFeed) {
+                        console.log('[LoadSectionData] Fetching reddit feed');
+                        fetchRedditFeed();
+                    }
+                    break;
+                    
+                case 'gear':
+                    // Gear section doesn't need data loading
+                    break;
+                    
+                case 'about':
+                    // About section doesn't need data loading
+                    break;
+            }
+        }
+        
+        // Handle browser back/forward
+        window.addEventListener('hashchange', () => {
+            const section = window.location.hash.slice(1) || 'dashboard';
+            if (section && section !== currentSection && !isNavigating) {
+                showSection(section, false);
+            }
+        });
+        
+        // Parse numeric value from snow string
+        function parseSnowfall(snowStr) {
+            const match = snowStr.match(/(\d+\.?\d*)/);
+            return match ? parseFloat(match[1]) : 0;
+        }
+        
+        // Parse wind speed from wind string
+        function parseWindSpeed(windStr) {
+            const match = windStr.match(/(\d+)/);
+            return match ? parseInt(match[1]) : 0;
+        }
+        
+        // ====================
+        // DATA FETCHING
+        // ====================
+        
+        // Fetch and display current conditions from Open-Meteo
+        async function fetchConditions() {
+            try {
+                const response = await fetch('/api/openmeteo/ski-conditions');
+                const data = await response.json();
+                cachedData.conditions = data;
+                
+                const summit = data.summit;
+                const base = data.base;
+                const lastUpdated = new Date(data.timestamp);
+                
+                document.getElementById('lastUpdated').textContent = 
+                    `Updated: ${lastUpdated.toLocaleString()} | Open-Meteo Data`;
+                
+                // Format temperatures with degree symbols
+                const summitTemp = summit.current.temperature ? `${Math.round(summit.current.temperature)}°F` : 'N/A';
+                const baseTemp = base.current.temperature ? `${Math.round(base.current.temperature)}°F` : 'N/A';
+                const nextSnow = data.summary.nextSnowDay;
+                const windData = data.summit.forecast[0] ? data.summit.forecast[0].windSpeed : 'N/A';
+                
+                document.getElementById('conditionsGrid').innerHTML = `
+                    <div class="condition-card">
+                        <div class="condition-label">Summit Temp</div>
+                        <div class="condition-value">${summitTemp}</div>
+                    </div>
+                    <div class="condition-card">
+                        <div class="condition-label">Base Temp</div>
+                        <div class="condition-value">${baseTemp}</div>
+                    </div>
+                    <div class="condition-card">
+                        <div class="condition-label">Snow Depth</div>
+                        <div class="condition-value">${summit.current.snowDepth ? summit.current.snowDepth.toFixed(1) + '"' : 'N/A'}</div>
+                    </div>
+                    <div class="condition-card">
+                        <div class="condition-label">Wind Speed</div>
+                        <div class="condition-value" style="font-size: 1.3rem;">${windData ? windData + ' mph' : 'N/A'}</div>
+                    </div>
+                    <div class="condition-card">
+                        <div class="condition-label">Next 24h Snow</div>
+                        <div class="condition-value">${data.summary.next24hSnow}</div>
+                    </div>
+                    <div class="condition-card">
+                        <div class="condition-label">Snow Outlook</div>
+                        <div class="condition-value" style="font-size: 0.95rem;">${nextSnow}</div>
+                    </div>
+                `;
+                
+                if (window.snowSystem) {
+                    const snowDepth = summit.current.snowDepth || 0;
+                    const windSpeed = windData ? parseInt(windData) : 0;
+                    window.snowSystem.updateConditions(snowDepth, windSpeed);
+                }
+            } catch (error) {
+                console.error('Error fetching conditions:', error);
+                document.getElementById('conditionsGrid').innerHTML = `
+                    <div class="condition-card" style="grid-column: 1 / -1;">
+                        <p style="color: #A1887F; font-size: 0.85rem;">Error loading Open-Meteo conditions. <a href="#" onclick="fetchConditions(); return false;" style="color: #52B788;">Retry</a></p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Fetch and display snowfall history
+        async function fetchSnowfallHistory() {
+            try {
+                const response = await fetch('/api/snowfall-history');
+                const data = await response.json();
+                
+                const labels = data.history.map(d => d.dateLabel);
+                const snowfallData = data.history.map(d => d.snowfall);
+                
+                if (chart) {
+                    chart.destroy();
+                }
+                
+                const ctx = document.getElementById('snowfallChart').getContext('2d');
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Snowfall (inches)',
+                            data: snowfallData,
+                            backgroundColor: 'rgba(212, 175, 55, 0.7)',
+                            borderColor: 'rgba(212, 175, 55, 0.95)',
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            hoverBackgroundColor: 'rgba(212, 175, 55, 0.9)',
+                            hoverBorderColor: 'rgba(184, 134, 11, 1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(62, 39, 35, 0.95)',
+                                titleColor: '#D4AF37',
+                                bodyColor: '#F5F5DC',
+                                borderColor: '#D4AF37',
+                                borderWidth: 2,
+                                padding: 12,
+                                titleFont: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 11
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.parsed.y}" of snow`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#F5F5DC',
+                                    font: {
+                                        size: 11
+                                    },
+                                    callback: function(value) {
+                                        return value + '"';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(212, 175, 55, 0.15)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#F5F5DC',
+                                    font: {
+                                        size: 10
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(212, 175, 55, 0.08)'
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching snowfall history:', error);
+            }
+        }
+        
+        // ====================
+        // YEAR-OVER-YEAR DATA FETCHING & DISPLAY
+        // ====================
+        
+        let yearOverYearChart = null;
+        let snowDepthChart = null;
+        
+        // Forest color palette for year lines
+        const YEAR_COLORS = {
+            primary: 'rgba(27, 67, 50, 1)',      // Deep forest green
+            secondary: 'rgba(45, 106, 79, 1)',   // Medium forest green
+            tertiary: 'rgba(82, 183, 136, 1)',   // Light forest green
+            quaternary: 'rgba(212, 175, 55, 1)', // Gold
+            quinary: 'rgba(184, 134, 11, 1)'     // Dark gold
+        };
+        
+        // Fetch and display year-over-year comparison
+        async function fetchYearOverYearData() {
+            try {
+                console.log('[Trends] Fetching year-over-year data...');
+                const response = await fetch('/api/snowfall/year-over-year');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('[Trends] Data received:', data);
+                
+                // Mark as loaded
+                cachedData.yearOverYear = true;
+                
+                // Verify insights exist
+                if (!data.insights) {
+                    throw new Error('No insights data in response');
+                }
+                
+                // Display insights
+                displayInsights(data.insights);
+                
+                // Display year-over-year chart
+                displayYearOverYearChart(data);
+                
+                // Display snow depth chart
+                displaySnowDepthChart(data);
+                
+                console.log('[Trends] Successfully rendered all data');
+                
+            } catch (error) {
+                console.error('[Trends] Error fetching data:', error);
+                const container = document.getElementById('insightsContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="insight-card" style="grid-column: 1 / -1;">
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="color: #CD853F; font-size: 1.2rem; margin-bottom: 10px;">⚠️</div>
+                                <p style="color: #A1887F; margin-bottom: 10px;">Unable to load snowfall trends</p>
+                                <p style="color: #A1887F; font-size: 0.85rem; margin: 0;">${error.message}</p>
+                                <button onclick="fetchYearOverYearData()" style="margin-top: 12px; padding: 8px 16px; background: #52B788; color: #FFFDD0; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                                    Retry
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // Display insight cards
+        function displayInsights(insights) {
+            if (!insights) return;
+            
+            const vsLastYearTrend = insights.comparison.vsLastYearPercent > 0 ? 'up' : 
+                                   insights.comparison.vsLastYearPercent < 0 ? 'down' : 'neutral';
+            const vsAverageTrend = insights.comparison.vsAveragePercent > 0 ? 'up' : 
+                                  insights.comparison.vsAveragePercent < 0 ? 'down' : 'neutral';
+            
+            const container = document.getElementById('insightsContainer');
+            container.innerHTML = `
+                <div class="insight-card">
+                    <div class="insight-card-title">Current Season Total</div>
+                    <div class="insight-card-value">${insights.currentYear.total}"</div>
+                    <div class="insight-card-comparison">
+                        Water Year ${insights.currentYear.year}
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-card-title">vs Last Year</div>
+                    <div class="insight-card-value">
+                        <span class="insight-card-trend trend-${vsLastYearTrend}">
+                            ${insights.comparison.trend}
+                        </span>
+                        ${Math.abs(insights.comparison.vsLastYearPercent)}%
+                    </div>
+                    <div class="insight-card-comparison">
+                        ${insights.comparison.vsLastYear > 0 ? '+' : ''}${insights.comparison.vsLastYear}" vs ${insights.lastYear.total}" (${insights.lastYear.year})
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-card-title">vs ${insights.years.length}-Year Average</div>
+                    <div class="insight-card-value">
+                        <span class="insight-card-trend trend-${vsAverageTrend}">
+                            ${vsAverageTrend === 'up' ? '↑' : vsAverageTrend === 'down' ? '↓' : '→'}
+                        </span>
+                        ${Math.abs(insights.comparison.vsAveragePercent)}%
+                    </div>
+                    <div class="insight-card-comparison">
+                        ${insights.comparison.vsAverage > 0 ? '+' : ''}${insights.comparison.vsAverage}" vs ${insights.historicalAverage}" avg
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-card-title">Best Month</div>
+                    <div class="insight-card-value">${insights.bestMonth.total}"</div>
+                    <div class="insight-card-comparison">
+                        ${insights.bestMonth.month}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Display year-over-year comparison chart
+        function displayYearOverYearChart(data) {
+            try {
+                if (yearOverYearChart) {
+                    yearOverYearChart.destroy();
+                }
+                
+                const chartEl = document.getElementById('yearOverYearChart');
+                if (!chartEl) {
+                    console.error('[Trends] yearOverYearChart canvas not found');
+                    return;
+                }
+                
+                const years = data.years;
+                const colors = [YEAR_COLORS.quaternary, YEAR_COLORS.secondary, YEAR_COLORS.tertiary, YEAR_COLORS.primary];
+                
+                const datasets = years.map((year, index) => {
+                    const yData = data.alignedData.map(d => d.cumulativeSnowfall[year] || null);
+                    return {
+                        label: `Water Year ${year}`,
+                        data: yData,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length].replace('1)', '0.1)'),
+                        borderWidth: index === 0 ? 3 : 2, // Current year thicker
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    };
+                });
+                
+                const labels = data.alignedData.map((d, i) => {
+                    // Show date label from current year
+                    return d.dateLabels[years[0]] || `Day ${i + 1}`;
+                });
+                
+                const ctx = chartEl.getContext('2d');
+                yearOverYearChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    color: '#F5F5DC',
+                                    font: {
+                                        size: 11
+                                    },
+                                    padding: 10,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(62, 39, 35, 0.95)',
+                                titleColor: '#D4AF37',
+                                bodyColor: '#F5F5DC',
+                                borderColor: '#D4AF37',
+                                borderWidth: 2,
+                                padding: 12,
+                                titleFont: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 11
+                                },
+                                callbacks: {
+                                    title: function(context) {
+                                        return context[0].label;
+                                    },
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}"`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#F5F5DC',
+                                    font: {
+                                        size: 11
+                                    },
+                                    callback: function(value) {
+                                        return value + '"';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(212, 175, 55, 0.15)'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Cumulative Snowfall (inches)',
+                                    color: '#D4AF37',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#F5F5DC',
+                                    font: {
+                                        size: 9
+                                    },
+                                    maxRotation: 45,
+                                    minRotation: 45,
+                                    autoSkip: true,
+                                    maxTicksLimit: 15
+                                },
+                                grid: {
+                                    color: 'rgba(212, 175, 55, 0.08)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('[Trends] Year-over-year chart rendered');
+                
+            } catch (error) {
+                console.error('[Trends] Error rendering year-over-year chart:', error);
+            }
+        }
+        
+        // Display snow depth comparison chart
+        function displaySnowDepthChart(data) {
+            try {
+                if (snowDepthChart) {
+                    snowDepthChart.destroy();
+                }
+                
+                const chartEl = document.getElementById('snowDepthChart');
+                if (!chartEl) {
+                    console.error('[Trends] snowDepthChart canvas not found');
+                    return;
+                }
+                
+                const years = data.years;
+                const colors = [YEAR_COLORS.quaternary, YEAR_COLORS.secondary, YEAR_COLORS.tertiary, YEAR_COLORS.primary];
+                
+                const datasets = years.map((year, index) => {
+                    const yData = data.alignedData.map(d => d.snowDepth[year] || null);
+                    return {
+                        label: `Water Year ${year}`,
+                        data: yData,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length].replace('1)', '0.1)'),
+                        borderWidth: index === 0 ? 3 : 2,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        fill: false
+                    };
+                });
+                
+                const labels = data.alignedData.map((d, i) => {
+                    return d.dateLabels[years[0]] || `Day ${i + 1}`;
+                });
+                
+                const ctx = chartEl.getContext('2d');
+                snowDepthChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    color: '#F5F5DC',
+                                    font: {
+                                        size: 11
+                                    },
+                                    padding: 10,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(62, 39, 35, 0.95)',
+                                titleColor: '#D4AF37',
+                                bodyColor: '#F5F5DC',
+                                borderColor: '#D4AF37',
+                                borderWidth: 2,
+                                padding: 12,
+                                titleFont: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 11
+                                },
+                                callbacks: {
+                                    title: function(context) {
+                                        return context[0].label;
+                                    },
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.parsed.y}" depth`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#F5F5DC',
+                                    font: {
+                                        size: 11
+                                    },
+                                    callback: function(value) {
+                                        return value + '"';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(212, 175, 55, 0.15)'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Snow Depth (inches)',
+                                    color: '#D4AF37',
+                                    font: {
+                                        size: 12,
+                                        weight: 'bold'
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#F5F5DC',
+                                    font: {
+                                        size: 9
+                                    },
+                                    maxRotation: 45,
+                                    minRotation: 45,
+                                    autoSkip: true,
+                                    maxTicksLimit: 15
+                                },
+                                grid: {
+                                    color: 'rgba(212, 175, 55, 0.08)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('[Trends] Snow depth chart rendered');
+                
+            } catch (error) {
+                console.error('[Trends] Error rendering snow depth chart:', error);
+            }
+        }
+        
+        // Fetch and display road conditions
+        async function fetchRoadConditions() {
+            try {
+                const response = await fetch('/api/road-conditions');
+                const data = await response.json();
+                cachedData.roadConditions = data;
+                
+                const lastUpdated = new Date(data.lastUpdated);
+                document.getElementById('roadUpdated').textContent = 
+                    `${lastUpdated.toLocaleTimeString()}`;
+                
+                // Display alert banners
+                const alertsContainer = document.getElementById('alertBanners');
+                if (data.closures && data.closures.length > 0) {
+                    alertsContainer.innerHTML = data.closures.map(closure => `
+                        <div class="alert-banner">
+                            <div class="alert-icon">⚠️</div>
+                            <div class="alert-content">
+                                <div class="alert-title">Closure: ${closure.road}</div>
+                                <div class="alert-text">${closure.message}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    alertsContainer.innerHTML = '';
+                }
+                
+                // Display road cards
+                const roadsContainer = document.getElementById('roadsGrid');
+                roadsContainer.innerHTML = data.roads.map(road => {
+                    const statusIcons = {
+                        good: '✅',
+                        caution: '⚠️',
+                        hazardous: '🚨',
+                        closed: '🚫'
+                    };
+                    
+                    const conditionIcons = {
+                        Clear: '☀️',
+                        'Light snow': '🌨️',
+                        'Heavy snow': '❄️',
+                        Fog: '🌫️',
+                        Rain: '🌧️'
+                    };
+                    
+                    return `
+                        <div class="road-card status-${road.status}">
+                            <div class="road-header">
+                                <div class="road-name-section">
+                                    <div class="road-name">${road.name}</div>
+                                    <div class="road-description">${road.description}</div>
+                                </div>
+                                <div class="road-status-badge ${road.status}">
+                                    ${statusIcons[road.status]} ${road.status.toUpperCase()}
+                                </div>
+                            </div>
+                            
+                            <div class="road-details">
+                                <div class="road-detail-item">
+                                    <div class="detail-icon">${conditionIcons[road.visibility] || '👁️'}</div>
+                                    <div class="detail-content">
+                                        <div class="detail-label">Visibility</div>
+                                        <div class="detail-value">${road.visibility}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="road-detail-item">
+                                    <div class="detail-icon">🛣️</div>
+                                    <div class="detail-content">
+                                        <div class="detail-label">Surface</div>
+                                        <div class="detail-value">${road.surface}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            ${road.advisories && road.advisories.length > 0 ? `
+                                <div class="road-advisories">
+                                    ${road.advisories.map(advisory => 
+                                        `<span class="advisory-tag">${advisory}</span>`
+                                    ).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            ${road.traffic ? `
+                                <div class="road-traffic">
+                                    <span>🚦</span>
+                                    <span>${road.traffic}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Error fetching road conditions:', error);
+                document.getElementById('roadsGrid').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <div class="empty-state-text">Unable to load road conditions</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Generate summary from full weather report
+        function generateSummary(fullReport) {
+            const lines = fullReport.split('\n').filter(line => line.trim());
+            
+            const snowfallLine = lines.find(line => 
+                line.toLowerCase().includes('overnight') || 
+                line.toLowerCase().includes('snowfall') ||
+                line.toLowerCase().includes('inches')
+            );
+            
+            const conditionsLine = lines.find(line => 
+                line.toLowerCase().includes('current') || 
+                line.toLowerCase().includes('base depth') ||
+                line.toLowerCase().includes('temperature')
+            );
+            
+            let summary = [];
+            if (snowfallLine) summary.push(snowfallLine);
+            if (conditionsLine) summary.push(conditionsLine);
+            
+            if (summary.length === 0) {
+                summary = lines.slice(0, 2).filter(line => line.length > 20);
+            }
+            
+            return summary.slice(0, 3).join('\n\n');
+        }
+        
+        // Fetch and display daily weather report
+        async function fetchWeatherReport() {
+            try {
+                const response = await fetch('/api/weather-report');
+                const data = await response.json();
+                cachedData.weatherReport = data;
+                
+                document.getElementById('reportDate').textContent = 
+                    `${new Date(data.date).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric'
+                    })}`;
+                
+                const summary = generateSummary(data.report);
+                
+                const contentHtml = `
+                    <div class="weather-summary">
+                        <p style="white-space: pre-line;">${summary}</p>
+                    </div>
+                    <a href="https://www.skihood.com/the-mountain/mountain-report" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="read-more-link">
+                        📄 Read Full Report →
+                    </a>
+                `;
+                
+                document.getElementById('weatherReportContent').innerHTML = contentHtml;
+                
+            } catch (error) {
+                console.error('Error fetching weather report:', error);
+                document.getElementById('weatherReportContent').innerHTML = 
+                    '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Unable to load weather report</div></div>';
+            }
+        }
+        
+        // Fetch and display Reddit community posts
+        async function fetchRedditFeed() {
+            try {
+                const response = await fetch('/api/reddit-feed');
+                const data = await response.json();
+                cachedData.redditFeed = data;
+                
+                const lastUpdated = new Date(data.lastUpdated);
+                document.getElementById('redditUpdated').textContent = 
+                    `Updated ${lastUpdated.toLocaleTimeString()}`;
+                
+                const postsContainer = document.getElementById('redditPostsGrid');
+                
+                if (!data.posts || data.posts.length === 0) {
+                    postsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🎿</div>
+                            <div class="empty-state-text">No recent community posts found</div>
+                            <p style="margin-top: 8px; font-size: 0.85rem;">Check back soon for updates!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                postsContainer.innerHTML = data.posts.map(post => `
+                    <a href="${post.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+                        <div class="reddit-post-card">
+                            <div class="reddit-post-title">${escapeHtml(post.title)}</div>
+                            
+                            <div class="reddit-post-meta">
+                                <div class="reddit-meta-item reddit-upvotes">
+                                    <span class="reddit-meta-icon">⬆️</span>
+                                    <span>${post.upvotes}</span>
+                                </div>
+                                <div class="reddit-meta-item">
+                                    <span class="reddit-meta-icon">💬</span>
+                                    <span>${post.comments}</span>
+                                </div>
+                                <div class="reddit-meta-item">
+                                    <span class="reddit-meta-icon">👤</span>
+                                    <span>u/${escapeHtml(post.author)}</span>
+                                </div>
+                            </div>
+                            
+                            ${post.preview ? `
+                                <div class="reddit-post-preview">${escapeHtml(post.preview)}</div>
+                            ` : ''}
+                            
+                            <div class="reddit-post-footer">
+                                <span class="reddit-author">${post.subreddit}</span>
+                                <span class="reddit-time">${post.timeAgo}</span>
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error fetching Reddit feed:', error);
+                document.getElementById('redditPostsGrid').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <div class="empty-state-text">Unable to load community posts</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ====================
+        // DRIVING TIME ESTIMATOR
+        // ====================
+        
+        let autocompleteTimeout = null;
+        
+        function initializeDrivingTimeForm() {
+            const savedOrigin = localStorage.getItem('drivingOrigin') || 'Portland, OR';
+            document.getElementById('originInput').value = savedOrigin;
+            
+            const now = new Date();
+            document.getElementById('dateInput').valueAsDate = now;
+            document.getElementById('timeInput').value = now.toTimeString().slice(0, 5);
+            
+            const originInput = document.getElementById('originInput');
+            originInput.addEventListener('input', handleAutocompleteInput);
+            
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#originInput') && !e.target.closest('#autocompleteSuggestions')) {
+                    document.getElementById('autocompleteSuggestions').style.display = 'none';
+                }
+            });
+        }
+        
+        function handleAutocompleteInput(e) {
+            const input = e.target.value;
+            
+            clearTimeout(autocompleteTimeout);
+            
+            if (input.length < 3) {
+                document.getElementById('autocompleteSuggestions').style.display = 'none';
+                return;
+            }
+            
+            autocompleteTimeout = setTimeout(() => {
+                fetchAutocompleteSuggestions(input);
+            }, 300);
+        }
+        
+        async function fetchAutocompleteSuggestions(input) {
+            try {
+                const response = await fetch(`/api/autocomplete?input=${encodeURIComponent(input)}`);
+                const data = await response.json();
+                
+                const container = document.getElementById('autocompleteSuggestions');
+                
+                if (data.predictions && data.predictions.length > 0) {
+                    container.innerHTML = data.predictions.map(prediction => 
+                        `<div class="autocomplete-item" onclick="selectAutocompleteItem('${prediction.description.replace(/'/g, "\\'")}')">${prediction.description}</div>`
+                    ).join('');
+                    container.style.display = 'block';
+                } else {
+                    container.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error fetching autocomplete:', error);
+            }
+        }
+        
+        function selectAutocompleteItem(description) {
+            document.getElementById('originInput').value = description;
+            document.getElementById('autocompleteSuggestions').style.display = 'none';
+            localStorage.setItem('drivingOrigin', description);
+        }
+        
+        function setCurrentTime() {
+            const now = new Date();
+            document.getElementById('dateInput').valueAsDate = now;
+            document.getElementById('timeInput').value = now.toTimeString().slice(0, 5);
+            calculateDrivingTime();
+        }
+        
+        async function calculateDrivingTime() {
+            const origin = document.getElementById('originInput').value.trim();
+            const destination = 'Hood Meadows Ski Resort, OR';
+            const date = document.getElementById('dateInput').value;
+            const time = document.getElementById('timeInput').value;
+            
+            if (!origin) {
+                alert('Please enter a starting address');
+                return;
+            }
+            
+            localStorage.setItem('drivingOrigin', origin);
+            
+            const departureTime = new Date(`${date}T${time}`);
+            
+            const calculateBtn = document.getElementById('calculateBtn');
+            calculateBtn.disabled = true;
+            calculateBtn.textContent = 'Calculating...';
+            
+            try {
+                const response = await fetch('/api/driving-time', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        origin: origin,
+                        destination: destination,
+                        departureTime: departureTime.toISOString()
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayDrivingResults(data);
+                } else {
+                    alert('Unable to calculate route');
+                }
+                
+            } catch (error) {
+                console.error('Error calculating driving time:', error);
+                alert('Error calculating route');
+            } finally {
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = 'Calculate';
+            }
+        }
+        
+        function displayDrivingResults(data) {
+            document.getElementById('drivingResults').classList.add('visible');
+            
+            document.getElementById('resultTime').textContent = data.duration;
+            document.getElementById('resultDistance').textContent = data.distance;
+            
+            const arrivalTime = new Date(data.arrivalTime);
+            document.getElementById('resultArrival').textContent = arrivalTime.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            
+            document.getElementById('resultRoute').textContent = data.mainRoute;
+            
+            const trafficIndicator = document.getElementById('trafficIndicator');
+            const trafficLevels = {
+                light: { class: 'traffic-light', text: '✓ Light' },
+                moderate: { class: 'traffic-moderate', text: '⚠ Moderate' },
+                heavy: { class: 'traffic-heavy', text: '⚠ Heavy' }
+            };
+            
+            const traffic = trafficLevels[data.trafficLevel] || trafficLevels.light;
+            trafficIndicator.className = `traffic-indicator ${traffic.class}`;
+            trafficIndicator.innerHTML = `<span>●</span><span>${traffic.text}</span>`;
+            
+            const recommendedTime = new Date(data.recommendedDeparture);
+            const recommendedText = `Leave at ${recommendedTime.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            })} for 8AM arrival`;
+            
+            document.querySelector('#recommendedDeparture .recommendation-text').textContent = recommendedText;
+            
+            const hasHazardousRoads = cachedData.roadConditions && 
+                cachedData.roadConditions.roads.some(road => 
+                    road.status === 'hazardous' || road.status === 'closed'
+                );
+            
+            const roadWarning = document.getElementById('roadWarning');
+            if (hasHazardousRoads || data.trafficLevel === 'heavy') {
+                roadWarning.style.display = 'flex';
+                roadWarning.querySelector('.recommendation-text').textContent = 
+                    hasHazardousRoads ? 
+                    'Hazardous conditions detected' :
+                    'Heavy traffic expected';
+            } else {
+                roadWarning.style.display = 'none';
+            }
+            
+            const demoNotice = document.getElementById('demoNotice');
+            if (data.demo) {
+                demoNotice.style.display = 'block';
+            } else {
+                demoNotice.style.display = 'none';
+            }
+        }
+        
+        // ====================
+        // EXPORT/SHARE FUNCTIONS
+        // ====================
+        
+        // Show toast notification
+        function showToast(message, icon = '✅') {
+            // Remove any existing toasts
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) existingToast.remove();
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Hide and remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+        
+        // Copy section content to clipboard
+        async function copySection(sectionId) {
+            try {
+                const section = document.getElementById(sectionId);
+                if (!section) return;
+                
+                let content = '';
+                const timestamp = new Date().toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+                
+                // Get section title
+                const titleEl = section.querySelector('.section-title');
+                const descEl = section.querySelector('.section-description');
+                if (titleEl) {
+                    content += `${titleEl.textContent}\n`;
+                    if (descEl) content += `${descEl.textContent}\n`;
+                    content += `${timestamp}\n\n`;
+                }
+                
+                // Format based on section
+                if (sectionId === 'dashboard-section') {
+                    content += formatDashboardContent(section);
+                } else if (sectionId === 'trends-section') {
+                    content += formatTrendsContent(section);
+                } else if (sectionId === 'weather-section') {
+                    content += formatWeatherContent(section);
+                } else if (sectionId === 'trip-planning-section') {
+                    content += formatTripPlanningContent(section);
+                } else if (sectionId === 'community-section') {
+                    content += formatCommunityContent(section);
+                }
+                
+                // Copy to clipboard
+                await navigator.clipboard.writeText(content);
+                showToast('Copied to clipboard!', '📋');
+                
+            } catch (error) {
+                console.error('Copy failed:', error);
+                showToast('Copy failed. Please try again.', '⚠️');
+            }
+        }
+        
+        // Format dashboard content
+        function formatDashboardContent(section) {
+            let content = '';
+            const cards = section.querySelectorAll('.condition-card');
+            cards.forEach(card => {
+                const label = card.querySelector('.condition-label')?.textContent || '';
+                const value = card.querySelector('.condition-value')?.textContent || '';
+                content += `${label}: ${value}\n`;
+            });
+            return content;
+        }
+        
+        // Format trends content
+        function formatTrendsContent(section) {
+            let content = '';
+            const insights = section.querySelectorAll('.insight-card');
+            insights.forEach((insight, idx) => {
+                const title = insight.querySelector('.insight-title')?.textContent || '';
+                const value = insight.querySelector('.insight-value')?.textContent || '';
+                const desc = insight.querySelector('.insight-description')?.textContent || '';
+                content += `${title}: ${value}\n${desc}\n\n`;
+            });
+            return content;
+        }
+        
+        // Format weather content
+        function formatWeatherContent(section) {
+            let content = '';
+            const reportContent = section.querySelector('#weatherReportContent');
+            if (reportContent) {
+                const text = reportContent.textContent.trim();
+                content += text + '\n';
+            }
+            return content;
+        }
+        
+        // Format trip planning content
+        function formatTripPlanningContent(section) {
+            let content = '';
+            const roadCards = section.querySelectorAll('.road-card');
+            roadCards.forEach(card => {
+                const name = card.querySelector('.road-name')?.textContent || '';
+                const status = card.querySelector('.road-status-badge')?.textContent || '';
+                const surface = card.querySelector('.detail-value')?.textContent || '';
+                content += `${name}: ${status}\n${surface}\n\n`;
+            });
+            return content;
+        }
+        
+        // Format community content
+        function formatCommunityContent(section) {
+            let content = '';
+            const posts = section.querySelectorAll('.reddit-post-card');
+            posts.forEach((post, idx) => {
+                const title = post.querySelector('.reddit-post-title')?.textContent || '';
+                const author = post.querySelector('.reddit-author')?.textContent || '';
+                const upvotes = post.querySelector('.reddit-upvotes')?.textContent || '';
+                const preview = post.querySelector('.reddit-post-preview')?.textContent || '';
+                content += `${idx + 1}. ${title}\n`;
+                content += `   ${upvotes} upvotes | ${author}\n`;
+                if (preview) content += `   ${preview}\n`;
+                content += `\n`;
+            });
+            return content;
+        }
+        
+        // Print section to PDF
+        function printSection(sectionId) {
+            try {
+                // Hide all sections except the one to print
+                const allSections = document.querySelectorAll('.section');
+                const targetSection = document.getElementById(sectionId);
+                
+                allSections.forEach(section => {
+                    if (section.id !== sectionId) {
+                        section.style.display = 'none';
+                    }
+                });
+                
+                // Trigger print dialog
+                window.print();
+                
+                // Restore all sections
+                allSections.forEach(section => {
+                    section.style.display = '';
+                });
+                
+            } catch (error) {
+                console.error('Print failed:', error);
+                showToast('Print failed. Please try again.', '⚠️');
+            }
+        }
+        
+        // ====================
+        // ROAMING SQUIRREL EASTER EGG
+        // ====================
+        
+        let squirrelTimer = null;
+        
+        // Create and animate roaming squirrel
+        function createRoamingSquirrel() {
+            const squirrel = document.createElement('div');
+            squirrel.className = 'roaming-squirrel';
+            squirrel.textContent = '🐿️';
+            squirrel.style.top = Math.random() * 30 + '%';
+            squirrel.onclick = (e) => {
+                e.stopPropagation();
+                triggerEasterEgg(e);
+            };
+            document.body.appendChild(squirrel);
+            
+            // Create paw prints
+            const pawCount = Math.floor(Math.random() * 3) + 3;
+            for (let i = 0; i < pawCount; i++) {
+                setTimeout(() => {
+                    if (squirrel.parentNode) {
+                        const paw = document.createElement('div');
+                        paw.className = 'roaming-squirrel-paw';
+                        paw.textContent = '👣';
+                        paw.style.left = (Math.random() * 80 + 10) + '%';
+                        paw.style.top = (Math.random() * 60 + 20) + '%';
+                        document.body.appendChild(paw);
+                        
+                        setTimeout(() => paw.remove(), 1500);
+                    }
+                }, i * 500);
+            }
+            
+            // Remove squirrel after animation completes
+            setTimeout(() => {
+                if (squirrel.parentNode) {
+                    squirrel.remove();
+                }
+            }, 9000);
+        }
+        
+        // Start roaming squirrel loop
+        function startRoamingSquirrel() {
+            const scheduleNextSquirrel = () => {
+                const interval = Math.random() * (120000 - 30000) + 30000; // 30-120 seconds
+                squirrelTimer = setTimeout(() => {
+                    createRoamingSquirrel();
+                    scheduleNextSquirrel();
+                }, interval);
+            };
+            
+            scheduleNextSquirrel();
+        }
+        
+        // ====================
+        // INITIALIZATION
+        // ====================
+        
+        // Initialize everything
+        initNavigation();
+        initializeDrivingTimeForm();
+        
+        // Start roaming squirrel after splash screen
+        setTimeout(() => {
+            startRoamingSquirrel();
+        }, 8000);
+        
+        // Load initial data for dashboard
+        fetchConditions();
+        fetchSnowfallHistory();
+        
+        // Auto-refresh data every 30 minutes
+        setInterval(() => {
+            if (cachedData.conditions) fetchConditions();
+            if (cachedData.roadConditions) fetchRoadConditions();
+            if (cachedData.weatherReport) fetchWeatherReport();
+            if (cachedData.redditFeed) fetchRedditFeed();
+            if (chart) fetchSnowfallHistory();
+        }, 30 * 60 * 1000);
+    </script>
+</body>
+</html>

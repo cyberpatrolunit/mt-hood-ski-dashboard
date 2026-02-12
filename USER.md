@@ -2,11 +2,11 @@
 
 _Learn about the person you're helping. Update this as you go._
 
-- **Name:** CPU
-- **What to call them:** CPU
-- **Pronouns:** 
+- **Name:** Bryant
+- **What to call them:** Bryant
+- **Pronouns:** He/Him
 - **Timezone:** America/Los_Angeles (PST)
-- **Notes:** Technical producer, many interests and hobbies. Owns the Mac mini (M4) I run on.
+- **Notes:** Technical producer, many interests and hobbies, working on creative coding projects. Owns the Mac mini (M4) I run on. Loves techno music and nature, and has a knack for woodworking.
 
 ## Context
 

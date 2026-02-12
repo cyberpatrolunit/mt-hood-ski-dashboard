@@ -3,11 +3,13 @@
 ## Tasks (checked every ~30min during active hours)
 
 ### 1. Email Check (Urgent Only)
-- Look for emails with "urgent", "asap", "time-sensitive" in subject
+- Run: `python3 skills/check-gmail.py` (requires auth)
+- Look for emails with "urgent", "asap", "time-sensitive", "important"
 - Flag anything from key people (you'll learn these over time)
 - Track: `memory/heartbeat-state.json` → lastChecks.email
 
 ### 2. Calendar (<48h window)
+- Run: `python3 skills/check-calendar.py 48` (requires auth)
 - Upcoming events in next 48 hours
 - Flag anything <2h away that needs prep
 - Track: `memory/heartbeat-state.json` → lastChecks.calendar
@@ -18,7 +20,8 @@
 - Track: `memory/heartbeat-state.json` → lastChecks.system
 
 ### 4. Workspace Hygiene
-- Uncommitted changes in workspace (suggest commit)
+- Run: `bash skills/git-auto-commit.sh` to auto-commit changes
+- Uncommitted changes in workspace (suggest commit or auto-commit)
 - Memory files older than 7 days (suggest archive)
 - Track: `memory/heartbeat-state.json` → lastChecks.workspace
 

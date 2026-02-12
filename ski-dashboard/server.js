@@ -804,9 +804,32 @@ setInterval(() => {
 scrapeHoodMeadowsData();
 fetchRedditPosts();
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
+  // Auto-detect network IP
+  const os = require('os');
+  const nets = os.networkInterfaces();
+  let networkIP = 'unknown';
+  
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        networkIP = net.address;
+        break;
+      }
+    }
+  }
+  
   console.log(`Hood Meadows Ski Dashboard running on:`);
   console.log(`  Local:   http://localhost:${PORT}`);
-  console.log(`  Network: http://192.168.1.36:${PORT}`);
+  console.log(`  Network: http://${networkIP}:${PORT}`);
   console.log(`\nAuto-refresh: every 30 minutes`);
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Waiting 3 seconds...`);
+    setTimeout(() => {
+      process.exit(1);
+    }, 3000);
+  } else {
+    throw err;
+  }
 });

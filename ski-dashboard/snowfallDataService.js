@@ -292,7 +292,8 @@ function calculateInsights(historicalData) {
       total: Math.round(bestMonthTotal * 10) / 10
     },
     historicalAverage,
-    yearTotals
+    yearTotals,
+    years: years  // Add years array for frontend
   };
 }
 

@@ -176,6 +176,24 @@ async function getBaseConditions() {
 }
 
 /**
+ * Convert centimeters to inches
+ * @param {number} cm - Value in centimeters
+ * @returns {number} Value in inches
+ */
+function cmToInches(cm) {
+  return cm / 2.54;
+}
+
+/**
+ * Convert Celsius to Fahrenheit
+ * @param {number} celsius - Temperature in Celsius
+ * @returns {number} Temperature in Fahrenheit
+ */
+function celsiusToFahrenheit(celsius) {
+  return (celsius * 9/5) + 32;
+}
+
+/**
  * Process forecast data for ski dashboard
  */
 async function getSkiDashboardData() {
@@ -188,12 +206,12 @@ async function getSkiDashboardData() {
     for (let i = 0; i < Math.min(3, summit.daily.time.length); i++) {
       forecast.push({
         date: summit.daily.time[i],
-        tempMax: summit.daily.temperature_2m_max[i],
-        tempMin: summit.daily.temperature_2m_min[i],
-        snowfallSum: summit.daily.snowfall_sum[i],
+        tempMax: Math.round(celsiusToFahrenheit(summit.daily.temperature_2m_max[i])),
+        tempMin: Math.round(celsiusToFahrenheit(summit.daily.temperature_2m_min[i])),
+        snowfallSum: Math.round(cmToInches(summit.daily.snowfall_sum[i]) * 10) / 10,
         precipitationSum: summit.daily.precipitation_sum[i],
         windSpeed: summit.daily.wind_speed_10m_max[i],
-        snowDepth: summit.daily.snow_depth_max[i]
+        snowDepth: Math.round(cmToInches(summit.daily.snow_depth_max[i]) * 10) / 10
       });
     }
   }
@@ -201,32 +219,33 @@ async function getSkiDashboardData() {
   // Calculate 24hr snowfall
   const hourlySnowfall = summit.hourly?.snowfall || [];
   const next24hSnow = hourlySnowfall.slice(0, 24).reduce((sum, val) => sum + (val || 0), 0);
+  const next24hSnowInches = cmToInches(next24hSnow);
   
   return {
     timestamp: summit.timestamp,
     summit: {
       name: 'Mt Hood Summit (11,249 ft)',
       current: {
-        temperature: summit.current.temperature,
-        snowfall: summit.current.snowfall,
-        snowDepth: summit.current.snowDepth,
-        windSpeed: summit.current.windSpeed
+        temperature: Math.round(celsiusToFahrenheit(summit.current.temperature)),
+        snowfall: Math.round(cmToInches(summit.current.snowfall) * 10) / 10,
+        snowDepth: Math.round(cmToInches(summit.current.snowDepth) * 10) / 10,
+        windSpeed: Math.round(summit.current.windSpeed * 0.621371) // km/h to mph
       },
       forecast: forecast
     },
     base: {
       name: 'Hood Meadows Base (~6,000 ft)',
       current: {
-        temperature: base.current.temperature,
-        snowfall: base.current.snowfall,
-        snowDepth: base.current.snowDepth,
-        windSpeed: base.current.windSpeed
+        temperature: Math.round(celsiusToFahrenheit(base.current.temperature)),
+        snowfall: Math.round(cmToInches(base.current.snowfall) * 10) / 10,
+        snowDepth: Math.round(cmToInches(base.current.snowDepth) * 10) / 10,
+        windSpeed: Math.round(base.current.windSpeed * 0.621371) // km/h to mph
       }
     },
     summary: {
-      next24hSnow: `${next24hSnow.toFixed(1)}"`,
+      next24hSnow: `${next24hSnowInches.toFixed(1)}"`,
       nextSnowDay: forecast.find(f => f.snowfallSum > 0) ? 'Yes' : 'No snow forecast',
-      elevationDifference: `Summit ${summit.current.temperature || '?'}°, Base ${base.current.temperature || '?'}°`
+      elevationDifference: `Summit ${Math.round(celsiusToFahrenheit(summit.current.temperature))}°F, Base ${Math.round(celsiusToFahrenheit(base.current.temperature))}°F`
     }
   };
 }
@@ -245,12 +264,12 @@ async function getForecast() {
   for (let i = 0; i < conditions.daily.time.length; i++) {
     forecast.push({
       date: conditions.daily.time[i],
-      tempMax: conditions.daily.temperature_2m_max[i],
-      tempMin: conditions.daily.temperature_2m_min[i],
-      snowfall: conditions.daily.snowfall_sum[i],
+      tempMax: Math.round(celsiusToFahrenheit(conditions.daily.temperature_2m_max[i])),
+      tempMin: Math.round(celsiusToFahrenheit(conditions.daily.temperature_2m_min[i])),
+      snowfall: Math.round(cmToInches(conditions.daily.snowfall_sum[i]) * 10) / 10,
       precipitation: conditions.daily.precipitation_sum[i],
-      windSpeed: conditions.daily.wind_speed_10m_max[i],
-      snowDepth: conditions.daily.snow_depth_max[i]
+      windSpeed: Math.round(conditions.daily.wind_speed_10m_max[i] * 0.621371),
+      snowDepth: Math.round(cmToInches(conditions.daily.snow_depth_max[i]) * 10) / 10
     });
   }
   

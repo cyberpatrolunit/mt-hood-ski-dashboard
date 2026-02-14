@@ -1075,7 +1075,12 @@
         @media (max-width: 768px) {
             .insights-container {
                 grid-template-columns: 1fr;
-                gap: 10px;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+            
+            .insight-card {
+                padding: 14px;
             }
             
             .insight-card-value {
@@ -1817,6 +1822,25 @@
             
             .export-btn:active {
                 opacity: 1;
+            }
+            
+            /* Chart containers - more space on mobile */
+            .chart-container {
+                padding: 10px;
+                height: 45vh;
+                min-height: 280px;
+                max-height: 450px;
+                margin-bottom: 16px;
+            }
+            
+            .chart-title {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+            
+            .chart-subtitle {
+                font-size: 0.7rem;
+                margin-bottom: 8px;
             }
             
             .section-title {

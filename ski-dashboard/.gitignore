@@ -5,6 +5,13 @@ package-lock.json
 # Logs
 logs/*.log
 *.log
+dashboard.log
+ski-dashboard.log
+
+# Cache directories
+data/openmeteo-cache/
+data/snowfall-cache/
+data/nws-cache/
 
 # Environment
 .env

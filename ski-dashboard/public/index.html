@@ -2162,54 +2162,40 @@
                 
                 <!-- Webcam Grid -->
                 <div class="webcam-grid">
+                    <!-- Mt Hood Meadows Webcams via OnTheSnow -->
                     <div class="webcam-card">
-                        <h3 class="webcam-title">Timberline Lodge - Mt Hood</h3>
-                        <div class="webcam-frame">
-                            <img id="webcam1" src="https://www.timberlinelodge.com/images/Webcam_Images/mthood.jpg" alt="Timberline Webcam" onload="scheduleWebcamRefresh(this, 'https://www.timberlinelodge.com/images/Webcam_Images/mthood.jpg', 120000)">
+                        <h3 class="webcam-title">Mt Hood Meadows - Base Area</h3>
+                        <div class="webcam-frame" style="padding-bottom: 75%; position: relative; overflow: hidden;">
+                            <iframe 
+                                src="https://www.onthesnow.com/oregon/mt-hood-meadows-ski-resort/webcams" 
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                                title="Mt Hood Meadows Webcams"
+                                loading="lazy">
+                            </iframe>
                         </div>
-                        <p class="webcam-description">View from Timberline Lodge on Mt Hood (Refreshes every 2 min)</p>
+                        <p class="webcam-description">Live webcams from Mt Hood Meadows (Base, Vista, Heather, Cascade)</p>
                     </div>
                     
+                    <!-- Mt Hood Meadows Direct Link -->
                     <div class="webcam-card">
-                        <h3 class="webcam-title">Government Camp</h3>
-                        <div class="webcam-frame">
-                            <img id="webcam2" src="https://tripcheck.com/RoadCams/cams/US26%20at%20Government%20Camp_pid3165.JPG" alt="Government Camp Webcam" onload="scheduleWebcamRefresh(this, 'https://tripcheck.com/RoadCams/cams/US26%20at%20Government%20Camp_pid3165.JPG', 120000)">
+                        <h3 class="webcam-title">Mt Hood Meadows - Official</h3>
+                        <div class="webcam-frame" style="padding-bottom: 75%; position: relative; overflow: hidden;">
+                            <iframe 
+                                src="https://www.skihood.com/the-mountain/mountain-cams" 
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                                title="Mt Hood Meadows Official Webcams"
+                                loading="lazy">
+                            </iframe>
                         </div>
-                        <p class="webcam-description">US-26 at Government Camp (Oregon DOT)</p>
-                    </div>
-                    
-                    <div class="webcam-card">
-                        <h3 class="webcam-title">Mt Hood Summit</h3>
-                        <div class="webcam-frame">
-                            <img id="webcam3" src="https://www.timberlinelodge.com/images/Webcam_Images/mthood_summit.jpg" alt="Summit Webcam" onload="scheduleWebcamRefresh(this, 'https://www.timberlinelodge.com/images/Webcam_Images/mthood_summit.jpg', 120000)">
-                        </div>
-                        <p class="webcam-description">Mt Hood summit view (Refreshes every 2 min)</p>
-                    </div>
-                    
-                    <div class="webcam-card">
-                        <h3 class="webcam-title">Highway 35 @ Hood River Meadows</h3>
-                        <div class="webcam-frame">
-                            <img id="webcam4" src="https://tripcheck.com/RoadCams/cams/OR35%20at%20Hood%20River%20Meadows_pid2975.JPG" alt="Highway 35 Webcam" onload="scheduleWebcamRefresh(this, 'https://tripcheck.com/RoadCams/cams/OR35%20at%20Hood%20River%20Meadows_pid2975.JPG', 120000)">
-                        </div>
-                        <p class="webcam-description">OR-35 conditions near Hood River Meadows (Oregon DOT)</p>
+                        <p class="webcam-description">Official Mt Hood Meadows webcam page</p>
                     </div>
                 </div>
                 
                 <div class="card">
                     <p style="color: #A1887F; font-size: 0.85rem; text-align: center;">
-                        📹 Webcam feeds refresh every 2 minutes. Images courtesy of Timberline Lodge and Oregon DOT TripCheck. All times are Pacific Standard Time (PST).
+                        📹 Webcam feeds update continuously. Click to interact with full webcam pages. Images courtesy of Mt Hood Meadows and OnTheSnow.
                     </p>
                 </div>
-                
-                <script>
-                function scheduleWebcamRefresh(img, url, intervalMs) {
-                    // Refresh the webcam image by appending a timestamp to prevent caching
-                    setInterval(function() {
-                        const timestamp = new Date().getTime();
-                        img.src = url + '?t=' + timestamp;
-                    }, intervalMs);
-                }
-                </script>
             </section>
             
             <!-- ====================

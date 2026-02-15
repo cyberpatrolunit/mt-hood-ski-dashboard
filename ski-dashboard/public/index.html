@@ -839,6 +839,89 @@
         }
         
         /* ====================
+           WEBCAM SECTION
+           ==================== */
+        
+        .webcam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .webcam-card {
+            background: linear-gradient(135deg, rgba(93, 64, 55, 0.6) 0%, rgba(62, 39, 35, 0.5) 100%);
+            border-radius: 12px;
+            padding: 16px;
+            border: 2px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+        }
+        
+        .webcam-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.1rem;
+            color: #FFFDD0;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .webcam-frame {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background: rgba(27, 67, 50, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .webcam-frame iframe,
+        .webcam-frame img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .webcam-placeholder {
+            background: linear-gradient(135deg, rgba(27, 67, 50, 0.5) 0%, rgba(27, 67, 50, 0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .webcam-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(27, 67, 50, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #D4AF37;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .webcam-description {
+            color: #A1887F;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .webcam-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+        
+        /* ====================
            EXPORT/SHARE BUTTONS (TINY ICONS)
            ==================== */
         
@@ -1963,6 +2046,10 @@
                 <span class="nav-tab-icon">🏂</span>
                 <span class="nav-tab-label">The Conditions</span>
             </button>
+            <button class="nav-tab" data-section="webcams">
+                <span class="nav-tab-icon">📹</span>
+                <span class="nav-tab-label">Live Views</span>
+            </button>
             <button class="nav-tab" data-section="trends">
                 <span class="nav-tab-icon">📈</span>
                 <span class="nav-tab-label">Season Stories</span>
@@ -1996,6 +2083,10 @@
             <button class="bottom-nav-tab active" data-section="dashboard">
                 <span class="bottom-nav-tab-icon">🏂</span>
                 <span class="bottom-nav-tab-label">Conditions</span>
+            </button>
+            <button class="bottom-nav-tab" data-section="webcams">
+                <span class="bottom-nav-tab-icon">📹</span>
+                <span class="bottom-nav-tab-label">Cams</span>
             </button>
             <button class="bottom-nav-tab" data-section="trends">
                 <span class="bottom-nav-tab-icon">📈</span>
@@ -2053,6 +2144,75 @@
                 <div class="chart-container">
                     <h2 class="chart-title">📊 Snowfall History</h2>
                     <canvas id="snowfallChart"></canvas>
+                </div>
+            </section>
+            
+            <!-- ====================
+                 LIVE WEBCAMS SECTION
+                 ==================== -->
+            <section id="webcams-section" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📹 Live Views</h2>
+                    <p class="section-description">See the mountain in real-time</p>
+                    <div class="export-buttons">
+                        <button class="export-btn" onclick="printSection('webcams-section')" title="Print">🖨️</button>
+                        <button class="export-btn" onclick="copySection('webcams-section')" title="Copy">📋</button>
+                    </div>
+                </div>
+                
+                <!-- Webcam Grid -->
+                <div class="webcam-grid">
+                    <div class="webcam-card">
+                        <h3 class="webcam-title">Base Area</h3>
+                        <div class="webcam-frame">
+                            <iframe 
+                                src="https://www.youtube.com/embed/live_stream?channel=UCmW47d3RFBOsjoIFjMnuuVg&autoplay=1&mute=1" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <p class="webcam-description">View of the base lodge and parking area</p>
+                    </div>
+                    
+                    <div class="webcam-card">
+                        <h3 class="webcam-title">Mid-Mountain</h3>
+                        <div class="webcam-frame">
+                            <img src="https://www.skihood.com/images/webcam-placeholder.jpg" alt="Mid-Mountain Webcam" class="webcam-placeholder">
+                            <div class="webcam-overlay">
+                                <p>📹 Webcam feed coming soon</p>
+                            </div>
+                        </div>
+                        <p class="webcam-description">Mid-mountain conditions and trails</p>
+                    </div>
+                    
+                    <div class="webcam-card">
+                        <h3 class="webcam-title">Summit View</h3>
+                        <div class="webcam-frame">
+                            <img src="https://www.skihood.com/images/webcam-placeholder.jpg" alt="Summit Webcam" class="webcam-placeholder">
+                            <div class="webcam-overlay">
+                                <p>📹 Webcam feed coming soon</p>
+                            </div>
+                        </div>
+                        <p class="webcam-description">Summit panorama and upper lifts</p>
+                    </div>
+                    
+                    <div class="webcam-card">
+                        <h3 class="webcam-title">Parking Lot</h3>
+                        <div class="webcam-frame">
+                            <img src="https://www.skihood.com/images/webcam-placeholder.jpg" alt="Parking Webcam" class="webcam-placeholder">
+                            <div class="webcam-overlay">
+                                <p>📹 Webcam feed coming soon</p>
+                            </div>
+                        </div>
+                        <p class="webcam-description">Check parking availability</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <p style="color: #A1887F; font-size: 0.85rem; text-align: center;">
+                        Webcam feeds refresh automatically. All times are Pacific Standard Time (PST).
+                    </p>
                 </div>
             </section>
             
@@ -2896,6 +3056,11 @@
                         fetchConditions();
                         fetchSnowfallHistory();
                     }
+                    break;
+                    
+                case 'webcams':
+                    // Webcams section doesn't need data loading - streams load automatically
+                    console.log('[LoadSectionData] Webcams section loaded');
                     break;
                     
                 case 'trends':

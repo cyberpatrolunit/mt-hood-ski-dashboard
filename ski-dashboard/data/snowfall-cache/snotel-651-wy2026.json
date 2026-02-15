@@ -800,13 +800,25 @@
   {
     "date": "2026-02-11",
     "snowDepth": 35,
-    "snowfall": 0.1,
-    "precipitation": 0.1
+    "snowfall": 0,
+    "precipitation": 0
   },
   {
     "date": "2026-02-12",
     "snowDepth": 35,
     "snowfall": 0,
+    "precipitation": 0
+  },
+  {
+    "date": "2026-02-13",
+    "snowDepth": 34,
+    "snowfall": 0.2,
+    "precipitation": 0.2
+  },
+  {
+    "date": "2026-02-14",
+    "snowDepth": 36,
+    "snowfall": 2,
     "precipitation": 0
   }
 ]

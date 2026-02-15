@@ -2163,57 +2163,53 @@
                 <!-- Webcam Grid -->
                 <div class="webcam-grid">
                     <div class="webcam-card">
-                        <h3 class="webcam-title">Base Area</h3>
+                        <h3 class="webcam-title">Timberline Lodge - Mt Hood</h3>
                         <div class="webcam-frame">
-                            <iframe 
-                                src="https://www.youtube.com/embed/live_stream?channel=UCmW47d3RFBOsjoIFjMnuuVg&autoplay=1&mute=1" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
+                            <img id="webcam1" src="https://www.timberlinelodge.com/images/Webcam_Images/mthood.jpg" alt="Timberline Webcam" onload="scheduleWebcamRefresh(this, 'https://www.timberlinelodge.com/images/Webcam_Images/mthood.jpg', 120000)">
                         </div>
-                        <p class="webcam-description">View of the base lodge and parking area</p>
+                        <p class="webcam-description">View from Timberline Lodge on Mt Hood (Refreshes every 2 min)</p>
                     </div>
                     
                     <div class="webcam-card">
-                        <h3 class="webcam-title">Mid-Mountain</h3>
+                        <h3 class="webcam-title">Government Camp</h3>
                         <div class="webcam-frame">
-                            <img src="https://www.skihood.com/images/webcam-placeholder.jpg" alt="Mid-Mountain Webcam" class="webcam-placeholder">
-                            <div class="webcam-overlay">
-                                <p>📹 Webcam feed coming soon</p>
-                            </div>
+                            <img id="webcam2" src="https://tripcheck.com/RoadCams/cams/US26%20at%20Government%20Camp_pid3165.JPG" alt="Government Camp Webcam" onload="scheduleWebcamRefresh(this, 'https://tripcheck.com/RoadCams/cams/US26%20at%20Government%20Camp_pid3165.JPG', 120000)">
                         </div>
-                        <p class="webcam-description">Mid-mountain conditions and trails</p>
+                        <p class="webcam-description">US-26 at Government Camp (Oregon DOT)</p>
                     </div>
                     
                     <div class="webcam-card">
-                        <h3 class="webcam-title">Summit View</h3>
+                        <h3 class="webcam-title">Mt Hood Summit</h3>
                         <div class="webcam-frame">
-                            <img src="https://www.skihood.com/images/webcam-placeholder.jpg" alt="Summit Webcam" class="webcam-placeholder">
-                            <div class="webcam-overlay">
-                                <p>📹 Webcam feed coming soon</p>
-                            </div>
+                            <img id="webcam3" src="https://www.timberlinelodge.com/images/Webcam_Images/mthood_summit.jpg" alt="Summit Webcam" onload="scheduleWebcamRefresh(this, 'https://www.timberlinelodge.com/images/Webcam_Images/mthood_summit.jpg', 120000)">
                         </div>
-                        <p class="webcam-description">Summit panorama and upper lifts</p>
+                        <p class="webcam-description">Mt Hood summit view (Refreshes every 2 min)</p>
                     </div>
                     
                     <div class="webcam-card">
-                        <h3 class="webcam-title">Parking Lot</h3>
+                        <h3 class="webcam-title">Highway 35 @ Hood River Meadows</h3>
                         <div class="webcam-frame">
-                            <img src="https://www.skihood.com/images/webcam-placeholder.jpg" alt="Parking Webcam" class="webcam-placeholder">
-                            <div class="webcam-overlay">
-                                <p>📹 Webcam feed coming soon</p>
-                            </div>
+                            <img id="webcam4" src="https://tripcheck.com/RoadCams/cams/OR35%20at%20Hood%20River%20Meadows_pid2975.JPG" alt="Highway 35 Webcam" onload="scheduleWebcamRefresh(this, 'https://tripcheck.com/RoadCams/cams/OR35%20at%20Hood%20River%20Meadows_pid2975.JPG', 120000)">
                         </div>
-                        <p class="webcam-description">Check parking availability</p>
+                        <p class="webcam-description">OR-35 conditions near Hood River Meadows (Oregon DOT)</p>
                     </div>
                 </div>
                 
                 <div class="card">
                     <p style="color: #A1887F; font-size: 0.85rem; text-align: center;">
-                        Webcam feeds refresh automatically. All times are Pacific Standard Time (PST).
+                        📹 Webcam feeds refresh every 2 minutes. Images courtesy of Timberline Lodge and Oregon DOT TripCheck. All times are Pacific Standard Time (PST).
                     </p>
                 </div>
+                
+                <script>
+                function scheduleWebcamRefresh(img, url, intervalMs) {
+                    // Refresh the webcam image by appending a timestamp to prevent caching
+                    setInterval(function() {
+                        const timestamp = new Date().getTime();
+                        img.src = url + '?t=' + timestamp;
+                    }, intervalMs);
+                }
+                </script>
             </section>
             
             <!-- ====================

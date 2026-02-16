@@ -6,8 +6,6 @@ import type {
   MetricUnit,
 } from './utils/conversions';
 import {
-  convertFromInches,
-  convertFromMm,
   inchesToMm,
   mmToInches,
 } from './utils/conversions';

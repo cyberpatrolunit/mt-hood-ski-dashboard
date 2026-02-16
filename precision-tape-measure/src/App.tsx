@@ -1,9 +1,11 @@
 import { useState, useMemo, useEffect, KeyboardEvent } from 'react';
 import { TapeMeasure } from './components/TapeMeasure';
-import {
+import type {
   UnitSystem,
   ImperialUnit,
   MetricUnit,
+} from './utils/conversions';
+import {
   convertFromInches,
   convertFromMm,
   inchesToMm,

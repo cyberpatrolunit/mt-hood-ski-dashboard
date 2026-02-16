@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { UnitSystem, ImperialUnit } from '../utils/conversions';
-import type { MetricUnit } from '../utils/conversions';
+import type { UnitSystem, ImperialUnit, MetricUnit } from '../utils/conversions';
 
 interface TapeMeasureProps {
   value: number; // In base units (inches for imperial, mm for metric)

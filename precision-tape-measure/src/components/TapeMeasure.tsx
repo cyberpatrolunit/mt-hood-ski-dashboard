@@ -58,94 +58,90 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       .attr('height', height)
       .attr('fill', 'url(#carbon-fiber)');
 
-    // Determine scale and range based on unit - zoom in on current value
+    // Tape background (lighter area for the tape itself)
+    svg.append('rect')
+      .attr('x', 0)
+      .attr('y', 40)
+      .attr('width', width)
+      .attr('height', height - 80)
+      .attr('fill', '#1a1a1a')
+      .attr('stroke', '#333')
+      .attr('stroke-width', 1);
+
+    // Close-up view: tape slides under a fixed center indicator
+    // Much tighter zoom for precision viewing
     let viewRange: number;
     let centerValue: number;
     let tickGenerator: (scale: d3.ScaleLinear<number, number>) => void;
 
     if (system === 'imperial') {
       if (unit === 'feet') {
-        viewRange = 4; // Show 4 feet at a time
+        viewRange = 2; // Show 2 feet range
         centerValue = value / 12; // Convert inches to feet for centering
         tickGenerator = generateFeetTicks;
       } else {
-        // Zoom in based on precision - show fewer inches for finer precision
-        viewRange = precision >= 64 ? 6 : precision >= 32 ? 8 : 12;
+        // Very tight zoom based on precision - like looking at actual tape up close
+        viewRange = precision >= 64 ? 2 : precision >= 32 ? 3 : 4;
         centerValue = value;
         tickGenerator = (scale) => generateInchTicks(scale, precision);
       }
     } else {
       if (unit === 'm') {
-        viewRange = 2; // Show 2 meters at a time
+        viewRange = 0.5; // Show 0.5 meter range
         centerValue = value / 1000;
         tickGenerator = generateMeterTicks;
       } else if (unit === 'cm') {
-        viewRange = 50; // Show 50cm at a time
+        viewRange = 20; // Show 20cm range
         centerValue = value / 10;
         tickGenerator = generateCmTicks;
       } else {
-        viewRange = 200; // Show 200mm at a time
+        viewRange = 100; // Show 100mm range
         centerValue = value;
         tickGenerator = generateMmTicks;
       }
     }
 
-    // Center the scale on the current value
+    // Center the tape on the current value - tape slides under the fixed indicator
     const minDomain = Math.max(0, centerValue - viewRange / 2);
     const maxDomain = minDomain + viewRange;
 
     const scale = d3.scaleLinear()
       .domain([minDomain, maxDomain])
-      .range([50, width - 50]);
+      .range([0, width]);
 
-    // Render ticks
+    // Render ticks on the sliding tape
     tickGenerator(scale);
 
-    // Indicator line - calculate position based on unit
-    let indicatorValue: number;
-    if (system === 'imperial') {
-      indicatorValue = unit === 'feet' ? value / 12 : value;
-    } else {
-      if (unit === 'cm') {
-        indicatorValue = value / 10;
-      } else if (unit === 'm') {
-        indicatorValue = value / 1000;
-      } else {
-        indicatorValue = value;
-      }
-    }
+    // Fixed indicator in center - tape slides underneath
+    const centerX = width / 2;
     
-    const indicatorX = scale(indicatorValue);
-    
-    // Indicator line with smooth transition
-    const indicatorLine = svg.append('line')
-      .attr('x1', indicatorX)
-      .attr('x2', indicatorX)
+    // Indicator line (fixed in center)
+    svg.append('line')
+      .attr('x1', centerX)
+      .attr('x2', centerX)
       .attr('y1', 0)
       .attr('y2', height)
       .attr('stroke', '#ff006e')
       .attr('stroke-width', 3)
-      .attr('opacity', 0.9)
+      .attr('opacity', 0.95)
       .attr('filter', 'url(#glow)')
       .style('pointer-events', 'none');
 
-    // Animate the indicator
-    indicatorLine
-      .transition()
-      .duration(600)
-      .ease(d3.easeCubicInOut);
-
-    // Indicator top marker
+    // Indicator top marker (fixed)
     svg.append('polygon')
-      .attr('points', `${indicatorX - 8},10 ${indicatorX + 8},10 ${indicatorX},25`)
+      .attr('points', `${centerX - 10},5 ${centerX + 10},5 ${centerX},20`)
       .attr('fill', '#ff006e')
+      .attr('stroke', '#000')
+      .attr('stroke-width', 1)
       .attr('filter', 'url(#glow)')
       .style('pointer-events', 'none');
 
-    // Indicator bottom marker
+    // Indicator bottom marker (fixed)
     svg.append('polygon')
-      .attr('points', `${indicatorX - 8},${height - 10} ${indicatorX + 8},${height - 10} ${indicatorX},${height - 25}`)
+      .attr('points', `${centerX - 10},${height - 5} ${centerX + 10},${height - 5} ${centerX},${height - 20}`)
       .attr('fill', '#ff006e')
+      .attr('stroke', '#000')
+      .attr('stroke-width', 1)
       .attr('filter', 'url(#glow)')
       .style('pointer-events', 'none');
 

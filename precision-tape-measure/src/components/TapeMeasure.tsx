@@ -7,10 +7,71 @@ interface TapeMeasureProps {
   system: UnitSystem;
   unit: ImperialUnit | MetricUnit;
   precision: number; // Max denominator for imperial
+  zoom: number; // Zoom level (0.5 = zoomed out, 2 = zoomed in)
+  onZoomChange: (zoom: number) => void;
 }
 
-export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps) {
+export function TapeMeasure({ value, system, unit, precision, zoom, onZoomChange }: TapeMeasureProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+
+  // Handle mouse wheel zoom
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        const newZoom = Math.max(0.5, Math.min(4, zoom + delta));
+        onZoomChange(newZoom);
+      }
+    };
+
+    svg.addEventListener('wheel', handleWheel, { passive: false });
+    return () => svg.removeEventListener('wheel', handleWheel);
+  }, [zoom, onZoomChange]);
+
+  // Handle touch pinch zoom
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    let initialDistance = 0;
+    let initialZoom = zoom;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialDistance = Math.sqrt(dx * dx + dy * dy);
+        initialZoom = zoom;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (initialDistance > 0) {
+          const scale = distance / initialDistance;
+          const newZoom = Math.max(0.5, Math.min(4, initialZoom * scale));
+          onZoomChange(newZoom);
+        }
+      }
+    };
+
+    svg.addEventListener('touchstart', handleTouchStart);
+    svg.addEventListener('touchmove', handleTouchMove, { passive: false });
+    
+    return () => {
+      svg.removeEventListener('touchstart', handleTouchStart);
+      svg.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [zoom, onZoomChange]);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -60,36 +121,39 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
 
     // Close-up view: tape slides under a fixed center indicator
     // Much tighter zoom for precision viewing
-    let viewRange: number;
+    let baseViewRange: number;
     let centerValue: number;
     let tickGenerator: (scale: d3.ScaleLinear<number, number>) => void;
 
     if (system === 'imperial') {
       if (unit === 'feet') {
-        viewRange = 2; // Show 2 feet range
+        baseViewRange = 2; // Show 2 feet range at 1x zoom
         centerValue = value / 12; // Convert inches to feet for centering
         tickGenerator = generateFeetTicks;
       } else {
         // Very tight zoom based on precision - like looking at actual tape up close
-        viewRange = precision >= 64 ? 2 : precision >= 32 ? 3 : 4;
+        baseViewRange = precision >= 64 ? 2 : precision >= 32 ? 3 : 4;
         centerValue = value;
         tickGenerator = (scale) => generateInchTicks(scale, precision);
       }
     } else {
       if (unit === 'm') {
-        viewRange = 0.5; // Show 0.5 meter range
+        baseViewRange = 0.5; // Show 0.5 meter range at 1x zoom
         centerValue = value / 1000;
         tickGenerator = generateMeterTicks;
       } else if (unit === 'cm') {
-        viewRange = 20; // Show 20cm range
+        baseViewRange = 20; // Show 20cm range at 1x zoom
         centerValue = value / 10;
         tickGenerator = generateCmTicks;
       } else {
-        viewRange = 100; // Show 100mm range
+        baseViewRange = 100; // Show 100mm range at 1x zoom
         centerValue = value;
         tickGenerator = generateMmTicks;
       }
     }
+
+    // Apply zoom to view range (higher zoom = smaller range = more detail)
+    const viewRange = baseViewRange / zoom;
 
     // Center the tape on the current value - tape slides under the fixed indicator
     const minDomain = Math.max(0, centerValue - viewRange / 2);
@@ -593,7 +657,7 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       }
     }
 
-  }, [value, system, unit, precision]);
+  }, [value, system, unit, precision, zoom]);
 
   return (
     <div className="w-full h-[200px] border border-neutral-800 bg-black">

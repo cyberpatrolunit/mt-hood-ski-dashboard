@@ -39,6 +39,7 @@ function App() {
   const [inputValue, setInputValue] = useState('0');
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(true);
+  const [zoom, setZoom] = useState(1); // Zoom level: 0.5 to 4
 
   const currentUnit = system === 'imperial' ? imperialUnit : metricUnit;
 
@@ -368,12 +369,28 @@ function App() {
 
             {/* Tape Measure Visualizer */}
             <div className="border border-neutral-800 bg-neutral-950 p-6">
-              <label className="text-xs text-neutral-500 mb-3 block">VISUAL RULER</label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-xs text-neutral-500">VISUAL RULER</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-neutral-500">ZOOM: {zoom.toFixed(1)}x</span>
+                  <button
+                    onClick={() => setZoom(1)}
+                    className="text-xs px-2 py-1 border border-neutral-700 hover:border-neutral-600"
+                  >
+                    RESET
+                  </button>
+                </div>
+              </div>
+              <div className="text-xs text-neutral-600 mb-2">
+                PC: Mouse wheel to zoom | Mobile: Pinch to zoom
+              </div>
               <TapeMeasure
                 value={system === 'imperial' ? baseValue : baseValue}
                 system={system}
                 unit={currentUnit}
                 precision={precision}
+                zoom={zoom}
+                onZoomChange={setZoom}
               />
             </div>
 

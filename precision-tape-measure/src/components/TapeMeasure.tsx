@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { UnitSystem, ImperialUnit, MetricUnit } from '../utils/conversions';
+import { UnitSystem, ImperialUnit } from '../utils/conversions';
+import type { MetricUnit } from '../utils/conversions';
 
 interface TapeMeasureProps {
   value: number; // In base units (inches for imperial, mm for metric)
@@ -171,8 +172,6 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       const g = svg.append('g');
 
       for (let ft = 0; ft <= range; ft++) {
-        const inchValue = ft * 12;
-        
         g.append('line')
           .attr('x1', scale(ft))
           .attr('x2', scale(ft))

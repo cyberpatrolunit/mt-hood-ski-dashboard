@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect, KeyboardEvent } from 'react';
+import { useState, useMemo } from 'react';
+import type { KeyboardEvent } from 'react';
 import { TapeMeasure } from './components/TapeMeasure';
 import type {
   UnitSystem,

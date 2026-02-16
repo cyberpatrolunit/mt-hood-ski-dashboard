@@ -52,21 +52,11 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
     feMerge.append('feMergeNode').attr('in', 'coloredBlur');
     feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    // Background
+    // Background - pure black like reference
     svg.append('rect')
       .attr('width', width)
       .attr('height', height)
-      .attr('fill', 'url(#carbon-fiber)');
-
-    // Tape background (lighter area for the tape itself)
-    svg.append('rect')
-      .attr('x', 0)
-      .attr('y', 40)
-      .attr('width', width)
-      .attr('height', height - 80)
-      .attr('fill', '#1a1a1a')
-      .attr('stroke', '#333')
-      .attr('stroke-width', 1);
+      .attr('fill', '#000');
 
     // Close-up view: tape slides under a fixed center indicator
     // Much tighter zoom for precision viewing
@@ -114,6 +104,7 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
 
     // Fixed indicator in center - tape slides underneath
     const centerX = width / 2;
+    const indicatorColor = '#e91e63'; // Bright pink like reference
     
     // Indicator line (fixed in center)
     svg.append('line')
@@ -121,90 +112,132 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       .attr('x2', centerX)
       .attr('y1', 0)
       .attr('y2', height)
-      .attr('stroke', '#ff006e')
-      .attr('stroke-width', 3)
+      .attr('stroke', indicatorColor)
+      .attr('stroke-width', 4)
       .attr('opacity', 0.95)
       .attr('filter', 'url(#glow)')
       .style('pointer-events', 'none');
 
-    // Indicator top marker (fixed)
+    // Top indicator marker - triangle pointing down
     svg.append('polygon')
-      .attr('points', `${centerX - 10},5 ${centerX + 10},5 ${centerX},20`)
-      .attr('fill', '#ff006e')
-      .attr('stroke', '#000')
-      .attr('stroke-width', 1)
+      .attr('points', `${centerX - 15},10 ${centerX + 15},10 ${centerX},30`)
+      .attr('fill', indicatorColor)
       .attr('filter', 'url(#glow)')
       .style('pointer-events', 'none');
 
-    // Indicator bottom marker (fixed)
-    svg.append('polygon')
-      .attr('points', `${centerX - 10},${height - 5} ${centerX + 10},${height - 5} ${centerX},${height - 20}`)
-      .attr('fill', '#ff006e')
-      .attr('stroke', '#000')
-      .attr('stroke-width', 1)
+    // Bottom indicator marker - rounded pill shape like reference
+    svg.append('ellipse')
+      .attr('cx', centerX)
+      .attr('cy', height - 20)
+      .attr('rx', 18)
+      .attr('ry', 12)
+      .attr('fill', indicatorColor)
       .attr('filter', 'url(#glow)')
       .style('pointer-events', 'none');
 
     function generateInchTicks(scale: d3.ScaleLinear<number, number>, maxDenom: number) {
-      const color = '#84cc16'; // Lime green for imperial
-      const g = svg.append('g');
-      const [minVal, maxVal] = scale.domain();
+      const color = '#a4d63e'; // Bright lime green like reference
+      const g = svg.append('g')
+        .attr('class', 'tape-ticks');
       
+      const [minVal, maxVal] = scale.domain();
       const startInch = Math.floor(minVal);
       const endInch = Math.ceil(maxVal);
+      const centerY = height / 2;
 
       for (let i = startInch; i <= endInch; i++) {
         if (i < minVal || i > maxVal) continue;
 
-        // Whole inch
-        g.append('line')
-          .attr('x1', scale(i))
-          .attr('x2', scale(i))
-          .attr('y1', height / 2 - 40)
-          .attr('y2', height / 2 + 40)
-          .attr('stroke', color)
-          .attr('stroke-width', 2)
-          .attr('filter', 'url(#glow)');
+        const x = scale(i);
 
+        // Whole inch - tallest ticks extending up and down
+        g.append('line')
+          .attr('x1', x)
+          .attr('x2', x)
+          .attr('y1', 20)
+          .attr('y2', centerY - 35)
+          .attr('stroke', color)
+          .attr('stroke-width', 2.5)
+          .attr('stroke-linecap', 'round')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+        g.append('line')
+          .attr('x1', x)
+          .attr('x2', x)
+          .attr('y1', centerY + 35)
+          .attr('y2', height - 20)
+          .attr('stroke', color)
+          .attr('stroke-width', 2.5)
+          .attr('stroke-linecap', 'round')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+        // Number label in center
         g.append('text')
-          .attr('x', scale(i))
-          .attr('y', height / 2 + 55)
+          .attr('x', x)
+          .attr('y', centerY + 8)
           .attr('text-anchor', 'middle')
           .attr('fill', color)
-          .attr('font-size', '10px')
+          .attr('font-size', '40px')
           .attr('font-family', 'JetBrains Mono')
+          .attr('font-weight', 'bold')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)')
           .text(i);
 
-        // Fractional ticks
-        const fractions = [1/2, 1/4, 1/8, 1/16, 1/32, 1/64, 1/128];
-        for (const frac of fractions) {
+        // Fractional ticks with proper heights
+        const fractions = [
+          { frac: 1/2, height: 65 },
+          { frac: 1/4, height: 50 },
+          { frac: 1/8, height: 38 },
+          { frac: 1/16, height: 28 },
+          { frac: 1/32, height: 20 },
+          { frac: 1/64, height: 15 },
+          { frac: 1/128, height: 10 },
+        ];
+
+        for (const { frac, height: tickHeight } of fractions) {
           if (1 / frac > maxDenom) continue;
           
-          const heights = [35, 30, 25, 20, 15, 10, 7];
-          const heightIndex = Math.log2(1 / frac) - 1;
-          const tickHeight = heights[heightIndex] || 5;
-
           for (let j = 1; j < 1 / frac; j++) {
             const pos = i + j * frac;
             if (pos < minVal || pos > maxVal) continue;
 
+            const xPos = scale(pos);
+            const opacity = tickHeight > 30 ? 0.9 : 0.7;
+            const strokeWidth = tickHeight > 40 ? 2 : 1.5;
+
+            // Upper tick
             g.append('line')
-              .attr('x1', scale(pos))
-              .attr('x2', scale(pos))
-              .attr('y1', height / 2 - tickHeight)
-              .attr('y2', height / 2 + tickHeight)
+              .attr('x1', xPos)
+              .attr('x2', xPos)
+              .attr('y1', centerY - 35)
+              .attr('y2', centerY - 35 - tickHeight)
               .attr('stroke', color)
-              .attr('stroke-width', 1)
-              .attr('opacity', 0.7);
+              .attr('stroke-width', strokeWidth)
+              .attr('stroke-linecap', 'round')
+              .attr('opacity', opacity)
+              .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+            // Lower tick
+            g.append('line')
+              .attr('x1', xPos)
+              .attr('x2', xPos)
+              .attr('y1', centerY + 35)
+              .attr('y2', centerY + 35 + tickHeight)
+              .attr('stroke', color)
+              .attr('stroke-width', strokeWidth)
+              .attr('stroke-linecap', 'round')
+              .attr('opacity', opacity)
+              .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
           }
         }
       }
     }
 
     function generateFeetTicks(scale: d3.ScaleLinear<number, number>) {
-      const color = '#84cc16';
-      const g = svg.append('g');
+      const color = '#a4d63e';
+      const g = svg.append('g').attr('class', 'tape-ticks');
       const [minVal, maxVal] = scale.domain();
+      const centerY = height / 2;
       
       const startFt = Math.floor(minVal);
       const endFt = Math.ceil(maxVal);
@@ -212,23 +245,38 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       for (let ft = startFt; ft <= endFt; ft++) {
         if (ft < minVal || ft > maxVal) continue;
 
+        const x = scale(ft);
+
+        // Foot marks - tallest
         g.append('line')
-          .attr('x1', scale(ft))
-          .attr('x2', scale(ft))
-          .attr('y1', height / 2 - 45)
-          .attr('y2', height / 2 + 45)
+          .attr('x1', x)
+          .attr('x2', x)
+          .attr('y1', 20)
+          .attr('y2', centerY - 35)
           .attr('stroke', color)
-          .attr('stroke-width', 3)
-          .attr('filter', 'url(#glow)');
+          .attr('stroke-width', 2.5)
+          .attr('stroke-linecap', 'round')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+        g.append('line')
+          .attr('x1', x)
+          .attr('x2', x)
+          .attr('y1', centerY + 35)
+          .attr('y2', height - 20)
+          .attr('stroke', color)
+          .attr('stroke-width', 2.5)
+          .attr('stroke-linecap', 'round')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
 
         g.append('text')
-          .attr('x', scale(ft))
-          .attr('y', height / 2 + 60)
+          .attr('x', x)
+          .attr('y', centerY + 8)
           .attr('text-anchor', 'middle')
           .attr('fill', color)
-          .attr('font-size', '12px')
+          .attr('font-size', '40px')
           .attr('font-family', 'JetBrains Mono')
           .attr('font-weight', 'bold')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)')
           .text(`${ft}'`);
 
         // Inch subdivisions within each foot
@@ -236,22 +284,40 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
           const pos = ft + inch / 12;
           if (pos < minVal || pos > maxVal) continue;
 
+          const xPos = scale(pos);
+          const tickHeight = inch % 6 === 0 ? 50 : inch % 3 === 0 ? 38 : 28;
+          const strokeWidth = inch % 6 === 0 ? 2 : 1.5;
+
           g.append('line')
-            .attr('x1', scale(pos))
-            .attr('x2', scale(pos))
-            .attr('y1', height / 2 - 25)
-            .attr('y2', height / 2 + 25)
+            .attr('x1', xPos)
+            .attr('x2', xPos)
+            .attr('y1', centerY - 35)
+            .attr('y2', centerY - 35 - tickHeight)
             .attr('stroke', color)
-            .attr('stroke-width', 1.5)
-            .attr('opacity', 0.8);
+            .attr('stroke-width', strokeWidth)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.8)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+          g.append('line')
+            .attr('x1', xPos)
+            .attr('x2', xPos)
+            .attr('y1', centerY + 35)
+            .attr('y2', centerY + 35 + tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', strokeWidth)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.8)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
         }
       }
     }
 
     function generateMmTicks(scale: d3.ScaleLinear<number, number>) {
       const color = '#06b6d4'; // Cyan for metric
-      const g = svg.append('g');
+      const g = svg.append('g').attr('class', 'tape-ticks');
       const [minVal, maxVal] = scale.domain();
+      const centerY = height / 2;
       
       const startMm = Math.floor(minVal);
       const endMm = Math.ceil(maxVal);
@@ -259,36 +325,99 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       for (let i = startMm; i <= endMm; i++) {
         if (i < minVal || i > maxVal) continue;
 
+        const x = scale(i);
         const isCm = i % 10 === 0;
-        const tickHeight = isCm ? 40 : 20;
-        const strokeWidth = isCm ? 2 : 1;
-
-        g.append('line')
-          .attr('x1', scale(i))
-          .attr('x2', scale(i))
-          .attr('y1', height / 2 - tickHeight)
-          .attr('y2', height / 2 + tickHeight)
-          .attr('stroke', color)
-          .attr('stroke-width', strokeWidth)
-          .attr('filter', isCm ? 'url(#glow)' : 'none');
+        const is5mm = i % 5 === 0;
 
         if (isCm) {
+          // Centimeter marks - tallest
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', 20)
+            .attr('y2', centerY - 35)
+            .attr('stroke', color)
+            .attr('stroke-width', 2.5)
+            .attr('stroke-linecap', 'round')
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY + 35)
+            .attr('y2', height - 20)
+            .attr('stroke', color)
+            .attr('stroke-width', 2.5)
+            .attr('stroke-linecap', 'round')
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
           g.append('text')
-            .attr('x', scale(i))
-            .attr('y', height / 2 + 55)
+            .attr('x', x)
+            .attr('y', centerY + 8)
             .attr('text-anchor', 'middle')
             .attr('fill', color)
-            .attr('font-size', '10px')
+            .attr('font-size', '40px')
             .attr('font-family', 'JetBrains Mono')
+            .attr('font-weight', 'bold')
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)')
             .text(i / 10);
+        } else if (is5mm) {
+          // 5mm marks - medium
+          const tickHeight = 50;
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY - 35)
+            .attr('y2', centerY - 35 - tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', 2)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.9)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY + 35)
+            .attr('y2', centerY + 35 + tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', 2)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.9)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+        } else {
+          // 1mm marks - shortest
+          const tickHeight = 28;
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY - 35)
+            .attr('y2', centerY - 35 - tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', 1.5)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.7)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY + 35)
+            .attr('y2', centerY + 35 + tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', 1.5)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.7)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
         }
       }
     }
 
     function generateCmTicks(scale: d3.ScaleLinear<number, number>) {
       const color = '#06b6d4';
-      const g = svg.append('g');
+      const g = svg.append('g').attr('class', 'tape-ticks');
       const [minVal, maxVal] = scale.domain();
+      const centerY = height / 2;
       
       const startCm = Math.floor(minVal);
       const endCm = Math.ceil(maxVal);
@@ -296,35 +425,99 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       for (let i = startCm; i <= endCm; i++) {
         if (i < minVal || i > maxVal) continue;
 
-        const tickHeight = i % 10 === 0 ? 40 : 25;
-        const strokeWidth = i % 10 === 0 ? 2 : 1;
+        const x = scale(i);
+        const is10cm = i % 10 === 0;
+        const is5cm = i % 5 === 0;
 
-        g.append('line')
-          .attr('x1', scale(i))
-          .attr('x2', scale(i))
-          .attr('y1', height / 2 - tickHeight)
-          .attr('y2', height / 2 + tickHeight)
-          .attr('stroke', color)
-          .attr('stroke-width', strokeWidth)
-          .attr('filter', i % 10 === 0 ? 'url(#glow)' : 'none');
+        if (is10cm) {
+          // 10cm marks - tallest
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', 20)
+            .attr('y2', centerY - 35)
+            .attr('stroke', color)
+            .attr('stroke-width', 2.5)
+            .attr('stroke-linecap', 'round')
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
 
-        if (i % 10 === 0) {
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY + 35)
+            .attr('y2', height - 20)
+            .attr('stroke', color)
+            .attr('stroke-width', 2.5)
+            .attr('stroke-linecap', 'round')
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
           g.append('text')
-            .attr('x', scale(i))
-            .attr('y', height / 2 + 55)
+            .attr('x', x)
+            .attr('y', centerY + 8)
             .attr('text-anchor', 'middle')
             .attr('fill', color)
-            .attr('font-size', '10px')
+            .attr('font-size', '40px')
             .attr('font-family', 'JetBrains Mono')
+            .attr('font-weight', 'bold')
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)')
             .text(i);
+        } else if (is5cm) {
+          // 5cm marks - medium
+          const tickHeight = 50;
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY - 35)
+            .attr('y2', centerY - 35 - tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', 2)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.9)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY + 35)
+            .attr('y2', centerY + 35 + tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', 2)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.9)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+        } else {
+          // 1cm marks - shortest
+          const tickHeight = 35;
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY - 35)
+            .attr('y2', centerY - 35 - tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', 1.5)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.7)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+          g.append('line')
+            .attr('x1', x)
+            .attr('x2', x)
+            .attr('y1', centerY + 35)
+            .attr('y2', centerY + 35 + tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', 1.5)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.7)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
         }
       }
     }
 
     function generateMeterTicks(scale: d3.ScaleLinear<number, number>) {
       const color = '#06b6d4';
-      const g = svg.append('g');
+      const g = svg.append('g').attr('class', 'tape-ticks');
       const [minVal, maxVal] = scale.domain();
+      const centerY = height / 2;
       
       const startM = Math.floor(minVal);
       const endM = Math.ceil(maxVal);
@@ -332,23 +525,38 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       for (let m = startM; m <= endM; m++) {
         if (m < minVal || m > maxVal) continue;
 
+        const x = scale(m);
+
+        // Meter marks - tallest
         g.append('line')
-          .attr('x1', scale(m))
-          .attr('x2', scale(m))
-          .attr('y1', height / 2 - 45)
-          .attr('y2', height / 2 + 45)
+          .attr('x1', x)
+          .attr('x2', x)
+          .attr('y1', 20)
+          .attr('y2', centerY - 35)
           .attr('stroke', color)
-          .attr('stroke-width', 3)
-          .attr('filter', 'url(#glow)');
+          .attr('stroke-width', 2.5)
+          .attr('stroke-linecap', 'round')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+        g.append('line')
+          .attr('x1', x)
+          .attr('x2', x)
+          .attr('y1', centerY + 35)
+          .attr('y2', height - 20)
+          .attr('stroke', color)
+          .attr('stroke-width', 2.5)
+          .attr('stroke-linecap', 'round')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
 
         g.append('text')
-          .attr('x', scale(m))
-          .attr('y', height / 2 + 60)
+          .attr('x', x)
+          .attr('y', centerY + 8)
           .attr('text-anchor', 'middle')
           .attr('fill', color)
-          .attr('font-size', '12px')
+          .attr('font-size', '40px')
           .attr('font-family', 'JetBrains Mono')
           .attr('font-weight', 'bold')
+          .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)')
           .text(`${m}m`);
 
         // Decimeter subdivisions
@@ -356,14 +564,31 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
           const pos = m + dm / 10;
           if (pos < minVal || pos > maxVal) continue;
 
+          const xPos = scale(pos);
+          const tickHeight = dm % 5 === 0 ? 50 : 35;
+          const strokeWidth = dm % 5 === 0 ? 2 : 1.5;
+
           g.append('line')
-            .attr('x1', scale(pos))
-            .attr('x2', scale(pos))
-            .attr('y1', height / 2 - 25)
-            .attr('y2', height / 2 + 25)
+            .attr('x1', xPos)
+            .attr('x2', xPos)
+            .attr('y1', centerY - 35)
+            .attr('y2', centerY - 35 - tickHeight)
             .attr('stroke', color)
-            .attr('stroke-width', 1.5)
-            .attr('opacity', 0.8);
+            .attr('stroke-width', strokeWidth)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.8)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+
+          g.append('line')
+            .attr('x1', xPos)
+            .attr('x2', xPos)
+            .attr('y1', centerY + 35)
+            .attr('y2', centerY + 35 + tickHeight)
+            .attr('stroke', color)
+            .attr('stroke-width', strokeWidth)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.8)
+            .style('transition', 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
         }
       }
     }

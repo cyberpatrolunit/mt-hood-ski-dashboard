@@ -367,6 +367,28 @@ function App() {
               </div>
             </div>
 
+            {/* Resolution Control */}
+            {system === 'imperial' && imperialUnit === 'inches' && (
+              <div className="border border-neutral-800 bg-neutral-950 p-6">
+                <label className="text-xs text-neutral-500 mb-3 block">TAPE RESOLUTION</label>
+                <div className="grid grid-cols-4 gap-3">
+                  {precisionOptions.map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPrecision(p)}
+                      className={`px-4 py-3 border text-lg font-semibold ${
+                        precision === p
+                          ? `${accentClass} ${bgAccentClass}`
+                          : 'border-neutral-700 hover:border-neutral-600'
+                      }`}
+                    >
+                      1/{p}"
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Tape Measure Visualizer */}
             <div className="border border-neutral-800 bg-neutral-950 p-6">
               <div className="flex items-center justify-between mb-3">

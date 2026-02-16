@@ -58,69 +58,108 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
       .attr('height', height)
       .attr('fill', 'url(#carbon-fiber)');
 
-    // Determine scale and range based on unit
-    let range: number;
+    // Determine scale and range based on unit - zoom in on current value
+    let viewRange: number;
+    let centerValue: number;
     let tickGenerator: (scale: d3.ScaleLinear<number, number>) => void;
 
     if (system === 'imperial') {
       if (unit === 'feet') {
-        range = Math.max(10, Math.ceil(value / 12) * 2);
+        viewRange = 4; // Show 4 feet at a time
+        centerValue = value / 12; // Convert inches to feet for centering
         tickGenerator = generateFeetTicks;
       } else {
-        range = Math.max(12, Math.ceil(value) * 2);
+        // Zoom in based on precision - show fewer inches for finer precision
+        viewRange = precision >= 64 ? 6 : precision >= 32 ? 8 : 12;
+        centerValue = value;
         tickGenerator = (scale) => generateInchTicks(scale, precision);
       }
     } else {
       if (unit === 'm') {
-        range = Math.max(1, Math.ceil(value / 1000) * 2);
+        viewRange = 2; // Show 2 meters at a time
+        centerValue = value / 1000;
         tickGenerator = generateMeterTicks;
       } else if (unit === 'cm') {
-        range = Math.max(100, Math.ceil(value / 10) * 20);
+        viewRange = 50; // Show 50cm at a time
+        centerValue = value / 10;
         tickGenerator = generateCmTicks;
       } else {
-        range = Math.max(100, Math.ceil(value) * 2);
+        viewRange = 200; // Show 200mm at a time
+        centerValue = value;
         tickGenerator = generateMmTicks;
       }
     }
 
+    // Center the scale on the current value
+    const minDomain = Math.max(0, centerValue - viewRange / 2);
+    const maxDomain = minDomain + viewRange;
+
     const scale = d3.scaleLinear()
-      .domain([0, range])
+      .domain([minDomain, maxDomain])
       .range([50, width - 50]);
 
     // Render ticks
     tickGenerator(scale);
 
-    // Indicator line
-    const indicatorX = scale(system === 'imperial' && unit === 'inches' ? value : value);
+    // Indicator line - calculate position based on unit
+    let indicatorValue: number;
+    if (system === 'imperial') {
+      indicatorValue = unit === 'feet' ? value / 12 : value;
+    } else {
+      if (unit === 'cm') {
+        indicatorValue = value / 10;
+      } else if (unit === 'm') {
+        indicatorValue = value / 1000;
+      } else {
+        indicatorValue = value;
+      }
+    }
     
-    svg.append('line')
+    const indicatorX = scale(indicatorValue);
+    
+    // Indicator line with smooth transition
+    const indicatorLine = svg.append('line')
       .attr('x1', indicatorX)
       .attr('x2', indicatorX)
-      .attr('y1', 20)
-      .attr('y2', height - 20)
+      .attr('y1', 0)
+      .attr('y2', height)
       .attr('stroke', '#ff006e')
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 3)
+      .attr('opacity', 0.9)
       .attr('filter', 'url(#glow)')
+      .style('pointer-events', 'none');
+
+    // Animate the indicator
+    indicatorLine
       .transition()
-      .duration(500)
+      .duration(600)
       .ease(d3.easeCubicInOut);
 
-    // Indicator value label
-    svg.append('text')
-      .attr('x', indicatorX)
-      .attr('y', 15)
-      .attr('text-anchor', 'middle')
+    // Indicator top marker
+    svg.append('polygon')
+      .attr('points', `${indicatorX - 8},10 ${indicatorX + 8},10 ${indicatorX},25`)
       .attr('fill', '#ff006e')
-      .attr('font-size', '12px')
-      .attr('font-family', 'JetBrains Mono')
       .attr('filter', 'url(#glow)')
-      .text('▼');
+      .style('pointer-events', 'none');
+
+    // Indicator bottom marker
+    svg.append('polygon')
+      .attr('points', `${indicatorX - 8},${height - 10} ${indicatorX + 8},${height - 10} ${indicatorX},${height - 25}`)
+      .attr('fill', '#ff006e')
+      .attr('filter', 'url(#glow)')
+      .style('pointer-events', 'none');
 
     function generateInchTicks(scale: d3.ScaleLinear<number, number>, maxDenom: number) {
       const color = '#84cc16'; // Lime green for imperial
       const g = svg.append('g');
+      const [minVal, maxVal] = scale.domain();
+      
+      const startInch = Math.floor(minVal);
+      const endInch = Math.ceil(maxVal);
 
-      for (let i = 0; i <= range; i++) {
+      for (let i = startInch; i <= endInch; i++) {
+        if (i < minVal || i > maxVal) continue;
+
         // Whole inch
         g.append('line')
           .attr('x1', scale(i))
@@ -151,7 +190,7 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
 
           for (let j = 1; j < 1 / frac; j++) {
             const pos = i + j * frac;
-            if (pos > range) break;
+            if (pos < minVal || pos > maxVal) continue;
 
             g.append('line')
               .attr('x1', scale(pos))
@@ -169,8 +208,14 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
     function generateFeetTicks(scale: d3.ScaleLinear<number, number>) {
       const color = '#84cc16';
       const g = svg.append('g');
+      const [minVal, maxVal] = scale.domain();
+      
+      const startFt = Math.floor(minVal);
+      const endFt = Math.ceil(maxVal);
 
-      for (let ft = 0; ft <= range; ft++) {
+      for (let ft = startFt; ft <= endFt; ft++) {
+        if (ft < minVal || ft > maxVal) continue;
+
         g.append('line')
           .attr('x1', scale(ft))
           .attr('x2', scale(ft))
@@ -192,9 +237,12 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
 
         // Inch subdivisions within each foot
         for (let inch = 1; inch < 12; inch++) {
+          const pos = ft + inch / 12;
+          if (pos < minVal || pos > maxVal) continue;
+
           g.append('line')
-            .attr('x1', scale(ft + inch / 12))
-            .attr('x2', scale(ft + inch / 12))
+            .attr('x1', scale(pos))
+            .attr('x2', scale(pos))
             .attr('y1', height / 2 - 25)
             .attr('y2', height / 2 + 25)
             .attr('stroke', color)
@@ -207,8 +255,14 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
     function generateMmTicks(scale: d3.ScaleLinear<number, number>) {
       const color = '#06b6d4'; // Cyan for metric
       const g = svg.append('g');
+      const [minVal, maxVal] = scale.domain();
+      
+      const startMm = Math.floor(minVal);
+      const endMm = Math.ceil(maxVal);
 
-      for (let i = 0; i <= range; i++) {
+      for (let i = startMm; i <= endMm; i++) {
+        if (i < minVal || i > maxVal) continue;
+
         const isCm = i % 10 === 0;
         const tickHeight = isCm ? 40 : 20;
         const strokeWidth = isCm ? 2 : 1;
@@ -238,8 +292,14 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
     function generateCmTicks(scale: d3.ScaleLinear<number, number>) {
       const color = '#06b6d4';
       const g = svg.append('g');
+      const [minVal, maxVal] = scale.domain();
+      
+      const startCm = Math.floor(minVal);
+      const endCm = Math.ceil(maxVal);
 
-      for (let i = 0; i <= range; i++) {
+      for (let i = startCm; i <= endCm; i++) {
+        if (i < minVal || i > maxVal) continue;
+
         const tickHeight = i % 10 === 0 ? 40 : 25;
         const strokeWidth = i % 10 === 0 ? 2 : 1;
 
@@ -268,8 +328,14 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
     function generateMeterTicks(scale: d3.ScaleLinear<number, number>) {
       const color = '#06b6d4';
       const g = svg.append('g');
+      const [minVal, maxVal] = scale.domain();
+      
+      const startM = Math.floor(minVal);
+      const endM = Math.ceil(maxVal);
 
-      for (let m = 0; m <= range; m++) {
+      for (let m = startM; m <= endM; m++) {
+        if (m < minVal || m > maxVal) continue;
+
         g.append('line')
           .attr('x1', scale(m))
           .attr('x2', scale(m))
@@ -291,9 +357,12 @@ export function TapeMeasure({ value, system, unit, precision }: TapeMeasureProps
 
         // Decimeter subdivisions
         for (let dm = 1; dm < 10; dm++) {
+          const pos = m + dm / 10;
+          if (pos < minVal || pos > maxVal) continue;
+
           g.append('line')
-            .attr('x1', scale(m + dm / 10))
-            .attr('x2', scale(m + dm / 10))
+            .attr('x1', scale(pos))
+            .attr('x2', scale(pos))
             .attr('y1', height / 2 - 25)
             .attr('y2', height / 2 + 25)
             .attr('stroke', color)

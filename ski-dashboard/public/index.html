@@ -839,6 +839,91 @@
         }
         
         /* ====================
+           NOAA FORECAST SECTION
+           ==================== */
+        
+        .noaa-forecast-container {
+            background: linear-gradient(135deg, rgba(93, 64, 55, 0.6) 0%, rgba(62, 39, 35, 0.5) 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 2px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .noaa-forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .forecast-period {
+            background: rgba(27, 67, 50, 0.5);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .forecast-period:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        
+        .forecast-period-name {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.9rem;
+            color: #FFFDD0;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .forecast-icon-container {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 8px;
+            position: relative;
+        }
+        
+        .forecast-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .forecast-temp {
+            font-size: 1.1rem;
+            color: #D4AF37;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .forecast-short {
+            font-size: 0.75rem;
+            color: #F5F5DC;
+            line-height: 1.3;
+            margin-top: 4px;
+        }
+        
+        .forecast-detail {
+            font-size: 0.7rem;
+            color: #A8947A;
+            margin-top: 8px;
+            line-height: 1.4;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .forecast-period:hover .forecast-detail {
+            max-height: 200px;
+        }
+
+        /* ====================
            WEBCAM SECTION
            ==================== */
         
@@ -2140,6 +2225,17 @@
                     </div>
                 </div>
                 
+                <!-- NOAA Weather Forecast -->
+                <div class="noaa-forecast-container">
+                    <h2 class="chart-title">🌨️ NOAA Weather Forecast</h2>
+                    <div class="noaa-forecast-grid" id="noaaForecastGrid">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading forecast...</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Snowfall Chart -->
                 <div class="chart-container">
                     <h2 class="chart-title">📊 Snowfall History</h2>
@@ -3037,6 +3133,7 @@
                         console.log('[LoadSectionData] Fetching dashboard conditions');
                         fetchConditions();
                         fetchSnowfallHistory();
+                        fetchNOAAForecast();
                     }
                     break;
                     
@@ -3260,6 +3357,73 @@
                 });
             } catch (error) {
                 console.error('Error fetching snowfall history:', error);
+            }
+        }
+        
+        // ====================
+        // NOAA WEATHER FORECAST FETCHING & DISPLAY
+        // ====================
+        
+        async function fetchNOAAForecast() {
+            try {
+                console.log('[NOAA] Fetching weather forecast...');
+                const response = await fetch('/api/nws/forecast');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('[NOAA] Forecast data received:', data);
+                
+                const forecastGrid = document.getElementById('noaaForecastGrid');
+                
+                if (!data.forecast || !data.forecast.periods || data.forecast.periods.length === 0) {
+                    forecastGrid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #F5F5DC;">
+                            <p>Weather forecast unavailable at this time.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Display first 7 forecast periods (typically covers 3-4 days)
+                const periods = data.forecast.periods.slice(0, 7);
+                
+                forecastGrid.innerHTML = periods.map(period => {
+                    // Extract temperature and unit
+                    const temp = period.temperature || 'N/A';
+                    const tempUnit = period.temperatureUnit === 'F' ? '°F' : '°C';
+                    
+                    return `
+                        <div class="forecast-period">
+                            <div class="forecast-period-name">${period.name || 'Unknown'}</div>
+                            <div class="forecast-icon-container">
+                                <img 
+                                    src="${period.icon || ''}" 
+                                    alt="${period.shortForecast || 'Weather icon'}"
+                                    class="forecast-icon"
+                                    onerror="this.style.display='none'"
+                                />
+                            </div>
+                            <div class="forecast-temp">${temp}${tempUnit}</div>
+                            <div class="forecast-short">${period.shortForecast || ''}</div>
+                            <div class="forecast-detail">${period.detailedForecast || ''}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                console.log('[NOAA] Forecast rendered successfully');
+                
+            } catch (error) {
+                console.error('[NOAA] Error fetching forecast:', error);
+                const forecastGrid = document.getElementById('noaaForecastGrid');
+                forecastGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #F5F5DC;">
+                        <p>⚠️ Unable to load weather forecast</p>
+                        <p style="font-size: 0.8rem; color: #A8947A; margin-top: 8px;">${error.message}</p>
+                    </div>
+                `;
             }
         }
         
@@ -4320,6 +4484,7 @@
         // Load initial data for dashboard
         fetchConditions();
         fetchSnowfallHistory();
+        fetchNOAAForecast();
         
         // Auto-refresh data every 30 minutes
         setInterval(() => {
@@ -4328,6 +4493,7 @@
             if (cachedData.weatherReport) fetchWeatherReport();
             if (cachedData.redditFeed) fetchRedditFeed();
             if (chart) fetchSnowfallHistory();
+            fetchNOAAForecast();
         }, 30 * 60 * 1000);
     </script>
 </body>

@@ -12,7 +12,10 @@ const path = require('path');
 // Located near Hood Meadows ski area
 const SNOTEL_STATION = '651';
 const SNOTEL_STATE = 'OR';
-const CACHE_DIR = path.join(__dirname, 'data', 'snowfall-cache');
+// Use /tmp for Vercel serverless environment, fallback to local for development
+const CACHE_DIR = process.env.VERCEL 
+  ? path.join('/tmp', 'snowfall-cache')
+  : path.join(__dirname, 'data', 'snowfall-cache');
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 // Ensure cache directory exists

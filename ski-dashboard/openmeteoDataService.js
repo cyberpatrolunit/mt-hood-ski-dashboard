@@ -20,7 +20,10 @@ const MEADOWS_LAT = 45.3311;
 const MEADOWS_LNG = -121.6644;
 const MEADOWS_ELEVATION = 1829; // meters
 
-const CACHE_DIR = path.join(__dirname, 'data', 'openmeteo-cache');
+// Use /tmp for Vercel serverless environment, fallback to local for development
+const CACHE_DIR = process.env.VERCEL 
+  ? path.join('/tmp', 'openmeteo-cache')
+  : path.join(__dirname, 'data', 'openmeteo-cache');
 const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
 
 // Ensure cache directory exists

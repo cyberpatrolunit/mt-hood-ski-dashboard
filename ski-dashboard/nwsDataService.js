@@ -17,7 +17,10 @@ const NWS_GRID_Y = 88;
 const HOOD_MEADOWS_LAT = 45.3311;
 const HOOD_MEADOWS_LNG = -121.6644;
 
-const CACHE_DIR = path.join(__dirname, 'data', 'nws-cache');
+// Use /tmp for Vercel serverless environment, fallback to local for development
+const CACHE_DIR = process.env.VERCEL 
+  ? path.join('/tmp', 'nws-cache')
+  : path.join(__dirname, 'data', 'nws-cache');
 const CACHE_DURATION_MS = 2 * 60 * 60 * 1000; // 2 hours for forecasts
 
 // Ensure cache directory exists

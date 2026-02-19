@@ -818,7 +818,37 @@
   {
     "date": "2026-02-14",
     "snowDepth": 36,
-    "snowfall": 2,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2026-02-15",
+    "snowDepth": 39,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2026-02-16",
+    "snowDepth": 39,
+    "snowfall": 0.7,
+    "precipitation": 0.7
+  },
+  {
+    "date": "2026-02-17",
+    "snowDepth": 45,
+    "snowfall": 0.3,
+    "precipitation": 0.3
+  },
+  {
+    "date": "2026-02-18",
+    "snowDepth": 46,
+    "snowfall": 0.5,
+    "precipitation": 0.5
+  },
+  {
+    "date": "2026-02-19",
+    "snowDepth": 47,
+    "snowfall": 1,
     "precipitation": 0
   }
 ]

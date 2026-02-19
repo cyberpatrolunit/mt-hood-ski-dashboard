@@ -10,8 +10,8 @@ const path = require('path');
 
 // NWS forecast office and grid points for Mt Hood area
 const NWS_OFFICE = 'PQR'; // Portland Forecast Office
-const NWS_GRID_X = 104;
-const NWS_GRID_Y = 102;
+const NWS_GRID_X = 144; // Correct grid for Mt Hood Meadows elevation
+const NWS_GRID_Y = 88;
 
 // Higher elevation forecast points (approximations for Mt Hood)
 const HOOD_MEADOWS_LAT = 45.3311;

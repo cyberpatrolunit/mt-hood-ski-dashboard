@@ -4592,7 +4592,10 @@
                     this.showUnlockButton();
                 } else {
                     // Desktop: auto-start after short delay
-                    setTimeout(() => this.startAudio(), 2000);
+                    setTimeout(async () => {
+                        await Tone.start();
+                        this.startAudio();
+                    }, 2000);
                 }
             }
 
@@ -4601,23 +4604,26 @@
                 button.className = 'audio-unlock';
                 button.innerHTML = '🎵 Tap to enable music';
                 
-                const handleUnlock = async (e) => {
+                const handleUnlock = (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('🎧 User tapped unlock button');
                     
-                    try {
-                        await this.startAudio();
+                    // CRITICAL: Start Tone.js synchronously within the gesture event
+                    // iOS Safari requires AudioContext to be created/resumed immediately
+                    Tone.start().then(() => {
+                        console.log('✅ Tone.js started synchronously');
+                        this.startAudio();
                         button.style.animation = 'fadeOut 0.3s ease';
                         setTimeout(() => button.remove(), 300);
-                    } catch (error) {
+                    }).catch(error => {
                         console.error('❌ Failed to unlock audio:', error);
                         button.innerHTML = '❌ Audio failed - tap to retry';
-                    }
+                    });
                 };
                 
                 button.onclick = handleUnlock;
-                button.ontouchstart = handleUnlock;
+                button.ontouchend = handleUnlock; // Use touchend instead of touchstart for better iOS handling
                 document.body.appendChild(button);
                 
                 // Add fadeOut animation
@@ -4626,17 +4632,16 @@
                 document.head.appendChild(style);
             }
 
-            async startAudio() {
+            startAudio() {
                 if (this.unlocked) return;
                 this.unlocked = true;
                 
-                console.log('🎧 Starting audio context...');
+                console.log('🎧 Initializing synth...');
                 this.updateStatus('🎧 Initializing audio...');
                 
                 try {
-                    // Wait for Tone.js to be ready
-                    await Tone.start();
-                    console.log('✅ Tone.js started, context state:', Tone.context.state);
+                    // Tone.js is already started synchronously in the tap handler
+                    console.log('✅ Tone.js context state:', Tone.context.state);
                     
                     // Create a polyphonic synth
                     this.synth = new Tone.PolySynth(Tone.Synth, {

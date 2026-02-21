@@ -32,3 +32,19 @@ Thumbs.db
 tmp/
 temp/
 .vercel
+
+# Data and cache directories
+data/
+logs/
+*.log
+
+# Personal documentation (keep project files only)
+*.md
+*.txt
+!README.md
+
+# macOS
+.DS_Store
+
+# Vercel
+.vercel/

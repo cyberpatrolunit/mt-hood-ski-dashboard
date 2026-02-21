@@ -13,6 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="canvas-snow.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -2097,6 +2099,77 @@
             }
             50% {
                 transform: translateY(-4px);
+            }
+        }
+
+        /* ====================
+           MIDI PLAYER STYLES
+           ==================== */
+
+        /* Audio unlock overlay */
+        .audio-unlock {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 16px 24px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.3s ease, audioButtonPulse 2s ease-in-out infinite;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .audio-unlock:hover,
+        .audio-unlock:active {
+            background: linear-gradient(135deg, #7b8ff0 0%, #8a5ab8 100%);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        @keyframes audioButtonPulse {
+            0%, 100% { box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 8px 32px rgba(102, 126, 234, 0.8); }
+        }
+
+        .audio-status {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(30, 30, 30, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #aaa;
+            font-size: 11px;
+            z-index: 10001;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .audio-status:hover {
+            opacity: 1;
+        }
+
+        /* Mobile adjustments for audio controls */
+        @media (max-width: 768px) {
+            .audio-unlock {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                font-size: 18px;
+                padding: 20px;
+                justify-content: center;
+                border-width: 3px;
             }
         }
     </style>
@@ -4495,6 +4568,190 @@
             if (chart) fetchSnowfallHistory();
             fetchNOAAForecast();
         }, 30 * 60 * 1000);
+
+        // ===== HIDDEN MIDI PLAYER =====
+        
+        class MIDIPlayer {
+            constructor() {
+                this.tracks = [
+                    '/midi/shake_it_off.mid',
+                    '/midi/love_story.mid',
+                    '/midi/blank_space.mid'
+                ];
+                this.synth = null;
+                this.currentPart = null;
+                this.unlocked = false;
+                this.init();
+            }
+
+            async init() {
+                // Check if we need user interaction (mobile browsers)
+                const needsUnlock = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                
+                if (needsUnlock) {
+                    this.showUnlockButton();
+                } else {
+                    // Desktop: auto-start after short delay
+                    setTimeout(() => this.startAudio(), 2000);
+                }
+            }
+
+            showUnlockButton() {
+                const button = document.createElement('div');
+                button.className = 'audio-unlock';
+                button.innerHTML = '🎵 Tap to enable music';
+                
+                const handleUnlock = async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎧 User tapped unlock button');
+                    
+                    try {
+                        await this.startAudio();
+                        button.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => button.remove(), 300);
+                    } catch (error) {
+                        console.error('❌ Failed to unlock audio:', error);
+                        button.innerHTML = '❌ Audio failed - tap to retry';
+                    }
+                };
+                
+                button.onclick = handleUnlock;
+                button.ontouchstart = handleUnlock;
+                document.body.appendChild(button);
+                
+                // Add fadeOut animation
+                const style = document.createElement('style');
+                style.textContent = '@keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }';
+                document.head.appendChild(style);
+            }
+
+            async startAudio() {
+                if (this.unlocked) return;
+                this.unlocked = true;
+                
+                console.log('🎧 Starting audio context...');
+                this.updateStatus('🎧 Initializing audio...');
+                
+                try {
+                    // Wait for Tone.js to be ready
+                    await Tone.start();
+                    console.log('✅ Tone.js started, context state:', Tone.context.state);
+                    
+                    // Create a polyphonic synth
+                    this.synth = new Tone.PolySynth(Tone.Synth, {
+                        volume: -3,
+                        oscillator: { type: 'triangle' },
+                        envelope: {
+                            attack: 0.005,
+                            decay: 0.1,
+                            sustain: 0.3,
+                            release: 1
+                        }
+                    }).toDestination();
+                    
+                    console.log('✅ Synth created');
+                    this.updateStatus('🎵 Ready to play');
+                    
+                    // Start playing
+                    this.playRandom();
+                } catch (error) {
+                    console.error('❌ Failed to start audio:', error);
+                    this.updateStatus(`❌ Audio failed: ${error.message}`);
+                }
+            }
+
+            updateStatus(message) {
+                let status = document.getElementById('audio-status');
+                if (!status) {
+                    status = document.createElement('div');
+                    status.id = 'audio-status';
+                    status.className = 'audio-status';
+                    document.body.appendChild(status);
+                }
+                status.textContent = message;
+            }
+
+            async playRandom() {
+                // Pick random track
+                const randomTrack = this.tracks[Math.floor(Math.random() * this.tracks.length)];
+                const trackName = randomTrack.split('/').pop().replace('.mid', '').replace(/_/g, ' ');
+                console.log('🎵 Loading MIDI:', randomTrack);
+                this.updateStatus(`🎵 Loading ${trackName}...`);
+
+                try {
+                    // Check if libraries are loaded
+                    if (typeof Midi === 'undefined' || typeof Tone === 'undefined') {
+                        console.error('❌ Tone.js or MIDI library not loaded');
+                        this.updateStatus('❌ Audio libraries failed to load');
+                        setTimeout(() => this.playRandom(), 5000);
+                        return;
+                    }
+
+                    // Fetch and parse MIDI
+                    const midi = await Midi.fromUrl(randomTrack);
+                    console.log('✅ MIDI loaded:', midi.name, midi.tracks.length, 'tracks');
+                    
+                    // Clear previous part if exists
+                    if (this.currentPart) {
+                        this.currentPart.dispose();
+                        Tone.Transport.stop();
+                        Tone.Transport.cancel();
+                    }
+                    
+                    // Get the first track with notes
+                    const track = midi.tracks.find(t => t.notes.length > 0);
+                    if (!track) {
+                        console.log('⚠️ No notes in MIDI, trying next track');
+                        setTimeout(() => this.playRandom(), 5000);
+                        return;
+                    }
+                    
+                    console.log('🎹 Playing track with', track.notes.length, 'notes, duration:', track.duration.toFixed(1), 's');
+                    this.updateStatus(`🎵 Now playing: ${trackName}`);
+                    
+                    // Create a Part from the notes
+                    this.currentPart = new Tone.Part((time, note) => {
+                        this.synth.triggerAttackRelease(
+                            note.name,
+                            note.duration,
+                            time,
+                            note.velocity
+                        );
+                    }, track.notes.map(note => ({
+                        time: note.time,
+                        name: note.name,
+                        duration: note.duration,
+                        velocity: note.velocity
+                    })));
+                    
+                    // Loop the part
+                    this.currentPart.loop = false;
+                    this.currentPart.start(0);
+                    
+                    // Schedule next track after this one finishes
+                    const duration = track.duration;
+                    Tone.Transport.schedule(() => {
+                        console.log('🔄 Track finished, loading next...');
+                        this.playRandom();
+                    }, `+${duration + 2}`);
+                    
+                    // Start transport if not already started
+                    if (Tone.Transport.state !== 'started') {
+                        Tone.Transport.start();
+                        console.log('▶️ Transport started');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ MIDI player error:', error);
+                    this.updateStatus(`❌ Error: ${error.message}`);
+                    setTimeout(() => this.playRandom(), 10000);
+                }
+            }
+        }
+
+        // Initialize hidden MIDI player
+        const midiPlayer = new MIDIPlayer();
     </script>
 </body>
 </html>

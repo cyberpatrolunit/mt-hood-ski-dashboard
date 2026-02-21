@@ -320,6 +320,36 @@
       }
     }
 
+    /* Audio unlock overlay */
+    .audio-unlock {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px 20px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 10002;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: fadeIn 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .audio-unlock:hover {
+      background: rgba(50, 50, 50, 0.95);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* Mobile adjustments */
     @media (max-width: 768px) {
       .squirrel {
@@ -327,6 +357,12 @@
       }
       .paw-print {
         font-size: 0.8rem;
+      }
+      .audio-unlock {
+        bottom: 15px;
+        right: 15px;
+        font-size: 13px;
+        padding: 10px 16px;
       }
     }
   </style>
@@ -779,10 +815,43 @@
         ];
         this.synth = null;
         this.currentPart = null;
+        this.unlocked = false;
         this.init();
       }
 
       async init() {
+        // Check if we need user interaction (mobile browsers)
+        const needsUnlock = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (needsUnlock) {
+          this.showUnlockButton();
+        } else {
+          // Desktop: auto-start after short delay
+          setTimeout(() => this.startAudio(), 2000);
+        }
+      }
+
+      showUnlockButton() {
+        const button = document.createElement('div');
+        button.className = 'audio-unlock';
+        button.innerHTML = '🎵 Tap to enable music';
+        button.onclick = async () => {
+          await this.startAudio();
+          button.style.animation = 'fadeOut 0.3s ease';
+          setTimeout(() => button.remove(), 300);
+        };
+        document.body.appendChild(button);
+        
+        // Add fadeOut animation
+        const style = document.createElement('style');
+        style.textContent = '@keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }';
+        document.head.appendChild(style);
+      }
+
+      async startAudio() {
+        if (this.unlocked) return;
+        this.unlocked = true;
+        
         // Wait for Tone.js to be ready
         await Tone.start();
         
@@ -798,8 +867,8 @@
           }
         }).toDestination();
         
-        // Start playing after a short delay
-        setTimeout(() => this.playRandom(), 2000);
+        // Start playing
+        this.playRandom();
       }
 
       async playRandom() {

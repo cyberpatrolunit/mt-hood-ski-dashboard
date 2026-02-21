@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CPU Mac Mini Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -765,6 +767,101 @@
     
     // Spawn first squirrel after 5-10 seconds
     setTimeout(() => squirrelManager.spawnSquirrel(), 5000 + Math.random() * 5000);
+
+    // ===== HIDDEN MIDI PLAYER =====
+    
+    class MIDIPlayer {
+      constructor() {
+        this.tracks = [
+          '/midi/shake_it_off.mid',
+          '/midi/love_story.mid',
+          '/midi/blank_space.mid'
+        ];
+        this.synth = null;
+        this.currentPart = null;
+        this.init();
+      }
+
+      async init() {
+        // Wait for Tone.js to be ready
+        await Tone.start();
+        
+        // Create a polyphonic synth
+        this.synth = new Tone.PolySynth(Tone.Synth, {
+          volume: -8,
+          oscillator: { type: 'triangle' },
+          envelope: {
+            attack: 0.005,
+            decay: 0.1,
+            sustain: 0.3,
+            release: 1
+          }
+        }).toDestination();
+        
+        // Start playing after a short delay
+        setTimeout(() => this.playRandom(), 2000);
+      }
+
+      async playRandom() {
+        // Pick random track
+        const randomTrack = this.tracks[Math.floor(Math.random() * this.tracks.length)];
+
+        try {
+          // Fetch and parse MIDI
+          const midi = await Midi.fromUrl(randomTrack);
+          
+          // Clear previous part if exists
+          if (this.currentPart) {
+            this.currentPart.dispose();
+          }
+          
+          // Get the first track with notes
+          const track = midi.tracks.find(t => t.notes.length > 0);
+          if (!track) {
+            console.log('No notes in MIDI, trying next track');
+            setTimeout(() => this.playRandom(), 5000);
+            return;
+          }
+          
+          // Create a Part from the notes
+          this.currentPart = new Tone.Part((time, note) => {
+            this.synth.triggerAttackRelease(
+              note.name,
+              note.duration,
+              time,
+              note.velocity
+            );
+          }, track.notes.map(note => ({
+            time: note.time,
+            name: note.name,
+            duration: note.duration,
+            velocity: note.velocity
+          })));
+          
+          // Start the part
+          this.currentPart.start(0);
+          
+          // Schedule next track after this one finishes
+          const duration = track.duration;
+          Tone.Transport.schedule(() => {
+            this.currentPart.dispose();
+            this.playRandom();
+          }, duration + 2);
+          
+          // Start transport if not already started
+          if (Tone.Transport.state !== 'started') {
+            Tone.Transport.start();
+          }
+          
+        } catch (error) {
+          console.log('MIDI player error, trying next track in 30s:', error.message);
+          setTimeout(() => this.playRandom(), 30000);
+        }
+      }
+    }
+
+    // Initialize hidden MIDI player
+    const midiPlayer = new MIDIPlayer();
   </script>
 </body>
 </html>

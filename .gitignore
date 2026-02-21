@@ -1,0 +1,9 @@
+# Memory archives (keep local only, not in git)
+memory/archive/
+
+# Log files
+*.log
+dashboard/dashboard.log
+
+# Cache files
+ski-dashboard/data/openmeteo-cache/

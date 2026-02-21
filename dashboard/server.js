@@ -139,11 +139,24 @@ app.post('/api/model/switch', async (req, res) => {
 // Cron jobs endpoint
 app.get('/api/cron', async (req, res) => {
   try {
-    const token = JSON.parse(await fs.readFile(path.join(process.env.HOME, '.openclaw/openclaw.json'), 'utf8')).gateway.auth.token;
+    const configPath = path.join(process.env.HOME, '.openclaw/openclaw.json');
+    let config;
+    try {
+      config = JSON.parse(await fs.readFile(configPath, 'utf8'));
+    } catch (err) {
+      return res.json({ jobs: [], error: 'Config not found' });
+    }
+    
+    const token = config?.gateway?.auth?.token;
+    if (!token) {
+      return res.json({ jobs: [], error: 'No auth token' });
+    }
+    
     const result = await execAsync(`curl -s http://localhost:18789/api/cron/list -H "Authorization: Bearer ${token}"`);
-    res.json(JSON.parse(result.stdout || '[]'));
+    const data = JSON.parse(result.stdout || '{"jobs":[]}');
+    res.json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.json({ jobs: [], error: error.message });
   }
 });
 

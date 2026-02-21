@@ -325,24 +325,34 @@
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: rgba(30, 30, 30, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      padding: 12px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 16px;
+      padding: 16px 24px;
       color: #fff;
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
       z-index: 10002;
       display: flex;
       align-items: center;
       gap: 8px;
-      animation: fadeIn 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.3s ease, pulse 2s ease-in-out infinite;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .audio-unlock:hover {
-      background: rgba(50, 50, 50, 0.95);
-      border-color: rgba(255, 255, 255, 0.4);
+    .audio-unlock:hover,
+    .audio-unlock:active {
+      background: linear-gradient(135deg, #7b8ff0 0%, #8a5ab8 100%);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: scale(1.05);
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4); }
+      50% { box-shadow: 0 8px 32px rgba(102, 126, 234, 0.8); }
     }
 
     .audio-status {
@@ -378,10 +388,13 @@
         font-size: 0.8rem;
       }
       .audio-unlock {
-        bottom: 15px;
-        right: 15px;
-        font-size: 13px;
-        padding: 10px 16px;
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        font-size: 18px;
+        padding: 20px;
+        justify-content: center;
+        border-width: 3px;
       }
     }
   </style>
@@ -854,11 +867,24 @@
         const button = document.createElement('div');
         button.className = 'audio-unlock';
         button.innerHTML = '🎵 Tap to enable music';
-        button.onclick = async () => {
-          await this.startAudio();
-          button.style.animation = 'fadeOut 0.3s ease';
-          setTimeout(() => button.remove(), 300);
+        
+        const handleUnlock = async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('🎧 User tapped unlock button');
+          
+          try {
+            await this.startAudio();
+            button.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => button.remove(), 300);
+          } catch (error) {
+            console.error('❌ Failed to unlock audio:', error);
+            button.innerHTML = '❌ Audio failed - tap to retry';
+          }
         };
+        
+        button.onclick = handleUnlock;
+        button.ontouchstart = handleUnlock;
         document.body.appendChild(button);
         
         // Add fadeOut animation

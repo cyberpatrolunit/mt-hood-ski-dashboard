@@ -345,6 +345,25 @@
       border-color: rgba(255, 255, 255, 0.4);
     }
 
+    .audio-status {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(30, 30, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: #aaa;
+      font-size: 11px;
+      z-index: 10001;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .audio-status:hover {
+      opacity: 1;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -852,45 +871,85 @@
         if (this.unlocked) return;
         this.unlocked = true;
         
-        // Wait for Tone.js to be ready
-        await Tone.start();
+        console.log('🎧 Starting audio context...');
+        this.updateStatus('🎧 Initializing audio...');
         
-        // Create a polyphonic synth
-        this.synth = new Tone.PolySynth(Tone.Synth, {
-          volume: -3,
-          oscillator: { type: 'triangle' },
-          envelope: {
-            attack: 0.005,
-            decay: 0.1,
-            sustain: 0.3,
-            release: 1
-          }
-        }).toDestination();
-        
-        // Start playing
-        this.playRandom();
+        try {
+          // Wait for Tone.js to be ready
+          await Tone.start();
+          console.log('✅ Tone.js started, context state:', Tone.context.state);
+          
+          // Create a polyphonic synth
+          this.synth = new Tone.PolySynth(Tone.Synth, {
+            volume: -3,
+            oscillator: { type: 'triangle' },
+            envelope: {
+              attack: 0.005,
+              decay: 0.1,
+              sustain: 0.3,
+              release: 1
+            }
+          }).toDestination();
+          
+          console.log('✅ Synth created');
+          this.updateStatus('🎵 Ready to play');
+          
+          // Start playing
+          this.playRandom();
+        } catch (error) {
+          console.error('❌ Failed to start audio:', error);
+          this.updateStatus(`❌ Audio failed: ${error.message}`);
+        }
+      }
+
+      updateStatus(message) {
+        let status = document.getElementById('audio-status');
+        if (!status) {
+          status = document.createElement('div');
+          status.id = 'audio-status';
+          status.className = 'audio-status';
+          document.body.appendChild(status);
+        }
+        status.textContent = message;
       }
 
       async playRandom() {
         // Pick random track
         const randomTrack = this.tracks[Math.floor(Math.random() * this.tracks.length)];
+        const trackName = randomTrack.split('/').pop().replace('.mid', '').replace(/_/g, ' ');
+        console.log('🎵 Loading MIDI:', randomTrack);
+        this.updateStatus(`🎵 Loading ${trackName}...`);
 
         try {
+          // Check if libraries are loaded
+          if (typeof Midi === 'undefined' || typeof Tone === 'undefined') {
+            console.error('❌ Tone.js or MIDI library not loaded');
+            this.updateStatus('❌ Audio libraries failed to load');
+            setTimeout(() => this.playRandom(), 5000);
+            return;
+          }
+
           // Fetch and parse MIDI
           const midi = await Midi.fromUrl(randomTrack);
+          console.log('✅ MIDI loaded:', midi.name, midi.tracks.length, 'tracks');
           
           // Clear previous part if exists
           if (this.currentPart) {
             this.currentPart.dispose();
+            Tone.Transport.stop();
+            Tone.Transport.cancel();
           }
           
           // Get the first track with notes
           const track = midi.tracks.find(t => t.notes.length > 0);
           if (!track) {
-            console.log('No notes in MIDI, trying next track');
+            console.log('⚠️ No notes in MIDI, trying next track');
             setTimeout(() => this.playRandom(), 5000);
             return;
           }
+          
+          console.log('🎹 Playing track with', track.notes.length, 'notes, duration:', track.duration.toFixed(1), 's');
+          this.updateStatus(`🎵 Now playing: ${trackName}`);
           
           // Create a Part from the notes
           this.currentPart = new Tone.Part((time, note) => {
@@ -907,24 +966,27 @@
             velocity: note.velocity
           })));
           
-          // Start the part
+          // Loop the part
+          this.currentPart.loop = false;
           this.currentPart.start(0);
           
           // Schedule next track after this one finishes
           const duration = track.duration;
           Tone.Transport.schedule(() => {
-            this.currentPart.dispose();
+            console.log('🔄 Track finished, loading next...');
             this.playRandom();
-          }, duration + 2);
+          }, `+${duration + 2}`);
           
           // Start transport if not already started
           if (Tone.Transport.state !== 'started') {
             Tone.Transport.start();
+            console.log('▶️ Transport started');
           }
           
         } catch (error) {
-          console.log('MIDI player error, trying next track in 30s:', error.message);
-          setTimeout(() => this.playRandom(), 30000);
+          console.error('❌ MIDI player error:', error);
+          this.updateStatus(`❌ Error: ${error.message}`);
+          setTimeout(() => this.playRandom(), 10000);
         }
       }
     }

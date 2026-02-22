@@ -418,8 +418,34 @@
           <span class="stat-value" id="processes">--</span>
         </div>
         <div class="stat">
-          <span class="stat-label">Network RX</span>
-          <span class="stat-value" id="network">--</span>
+          <span class="stat-label">Power Draw</span>
+          <span class="stat-value" id="power">--</span>
+        </div>
+      </div>
+
+      <!-- Network I/O -->
+      <div class="card">
+        <h2>🌐 NETWORK I/O</h2>
+        <div class="stat">
+          <span class="stat-label">↓ RX Rate</span>
+          <span class="stat-value" id="net-rx">--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">↑ TX Rate</span>
+          <span class="stat-value" id="net-tx">--</span>
+        </div>
+      </div>
+
+      <!-- Disk I/O -->
+      <div class="card">
+        <h2>💾 DISK I/O</h2>
+        <div class="stat">
+          <span class="stat-label">Read Speed</span>
+          <span class="stat-value" id="disk-read">--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Write Speed</span>
+          <span class="stat-value" id="disk-write">--</span>
         </div>
       </div>
     </div>
@@ -637,16 +663,39 @@
       }
     }
 
+    // Fetch real-time high-frequency stats
+    async function fetchRealtime() {
+      try {
+        const response = await fetch('/api/realtime');
+        const data = await response.json();
+        
+        // Update network I/O
+        document.getElementById('net-rx').textContent = data.network.rxRateFormatted;
+        document.getElementById('net-tx').textContent = data.network.txRateFormatted;
+        
+        // Update disk I/O
+        document.getElementById('disk-read').textContent = `${data.disk.readKBps} KB/s`;
+        document.getElementById('disk-write').textContent = `${data.disk.writeKBps} KB/s`;
+        
+        // Update power
+        document.getElementById('power').textContent = data.power.formatted;
+      } catch (error) {
+        console.error('Error fetching realtime stats:', error);
+      }
+    }
+
     // Initialize
     initCharts();
     fetchStats();
     fetchOpenClaw();
+    fetchRealtime();
 
-    // Update intervals
-    setInterval(fetchStats, 5000);
-    setInterval(fetchOpenClaw, 10000);
-    setInterval(updateHeartbeat, 100);
-    setInterval(updateLatency, 2000);
+    // Update intervals - high frequency for realtime data
+    setInterval(fetchStats, 3000);        // System stats every 3 seconds
+    setInterval(fetchOpenClaw, 10000);    // OpenClaw stats every 10 seconds
+    setInterval(fetchRealtime, 1000);     // Realtime stats every 1 second
+    setInterval(updateHeartbeat, 100);    // Heartbeat visual every 100ms
+    setInterval(updateLatency, 2000);     // Network latency every 2 seconds
 
     // MIDI Player (keeping from original)
     class MIDIPlayer {

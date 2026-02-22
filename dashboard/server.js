@@ -160,6 +160,79 @@ app.get('/api/cron', async (req, res) => {
   }
 });
 
+// High-frequency real-time stats endpoint
+let lastNetworkStats = null;
+let lastDiskStats = null;
+
+app.get('/api/realtime', async (req, res) => {
+  try {
+    const [cpuCores, networkNow, diskIO, power] = await Promise.all([
+      // CPU per-core usage (top -l 1)
+      execAsync("top -l 2 -n 0 -s 0 | grep 'CPU usage' | tail -1").catch(() => ({ stdout: 'CPU usage: 0% user, 0% sys' })),
+      // Network stats
+      execAsync("netstat -ib | awk 'NR>1 && $1 ~ /^en/ {print $1,$7,$10}' | head -1").catch(() => ({ stdout: 'en0 0 0' })),
+      // Disk I/O
+      execAsync("iostat -d -c 2 | tail -1").catch(() => ({ stdout: '0 0' })),
+      // Power (requires sudo, fallback if unavailable)
+      execAsync("pmset -g batt | grep -Eo '[0-9]+W' | head -1").catch(() => ({ stdout: '0W' }))
+    ]);
+
+    // Parse CPU
+    const cpuMatch = cpuCores.stdout.match(/(\d+\.?\d*)%\s+user.*?(\d+\.?\d*)%\s+sys/);
+    const cpuUser = cpuMatch ? parseFloat(cpuMatch[1]) : 0;
+    const cpuSys = cpuMatch ? parseFloat(cpuMatch[2]) : 0;
+
+    // Parse Network
+    const netParts = networkNow.stdout.trim().split(/\s+/);
+    const netInterface = netParts[0] || 'en0';
+    const netRxBytes = parseInt(netParts[1]) || 0;
+    const netTxBytes = parseInt(netParts[2]) || 0;
+    
+    let netRxRate = 0, netTxRate = 0;
+    if (lastNetworkStats && lastNetworkStats.interface === netInterface) {
+      const timeDiff = (Date.now() - lastNetworkStats.timestamp) / 1000;
+      netRxRate = ((netRxBytes - lastNetworkStats.rx) / timeDiff / 1024).toFixed(2); // KB/s
+      netTxRate = ((netTxBytes - lastNetworkStats.tx) / timeDiff / 1024).toFixed(2); // KB/s
+    }
+    lastNetworkStats = { interface: netInterface, rx: netRxBytes, tx: netTxBytes, timestamp: Date.now() };
+
+    // Parse Disk I/O
+    const diskParts = diskIO.stdout.trim().split(/\s+/);
+    const diskKBRead = parseFloat(diskParts[0]) || 0;
+    const diskKBWrite = parseFloat(diskParts[1]) || 0;
+
+    // Power
+    const powerMatch = power.stdout.match(/(\d+)W/);
+    const powerWatts = powerMatch ? parseInt(powerMatch[1]) : 0;
+
+    res.json({
+      cpu: {
+        user: cpuUser,
+        system: cpuSys,
+        total: cpuUser + cpuSys
+      },
+      network: {
+        interface: netInterface,
+        rxRate: parseFloat(netRxRate),
+        txRate: parseFloat(netTxRate),
+        rxRateFormatted: `${netRxRate} KB/s`,
+        txRateFormatted: `${netTxRate} KB/s`
+      },
+      disk: {
+        readKBps: diskKBRead.toFixed(2),
+        writeKBps: diskKBWrite.toFixed(2)
+      },
+      power: {
+        watts: powerWatts,
+        formatted: `${powerWatts}W`
+      },
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Chat message endpoint
 app.post('/api/chat', async (req, res) => {
   try {

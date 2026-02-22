@@ -1,0 +1,9 @@
+# Generated icons
+output/
+test-output/
+
+# Node modules if we add dependencies later
+node_modules/
+
+# OS files
+.DS_Store

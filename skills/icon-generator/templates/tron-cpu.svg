@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <linearGradient id="cpu" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ffff"/>
+      <stop offset="100%" style="stop-color:#0080ff"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="12" height="12" fill="none" stroke="url(#cpu)" stroke-width="2"/>
+  <rect x="9" y="9" width="6" height="6" fill="url(#cpu)" opacity="0.5"/>
+  <line x1="6" y1="8" x2="3" y2="8" stroke="#00ffff" stroke-width="1"/>
+  <line x1="6" y1="12" x2="3" y2="12" stroke="#00ffff" stroke-width="1"/>
+  <line x1="6" y1="16" x2="3" y2="16" stroke="#00ffff" stroke-width="1"/>
+  <line x1="18" y1="8" x2="21" y2="8" stroke="#00ffff" stroke-width="1"/>
+  <line x1="18" y1="12" x2="21" y2="12" stroke="#00ffff" stroke-width="1"/>
+  <line x1="18" y1="16" x2="21" y2="16" stroke="#00ffff" stroke-width="1"/>
+  <line x1="8" y1="6" x2="8" y2="3" stroke="#00ffff" stroke-width="1"/>
+  <line x1="12" y1="6" x2="12" y2="3" stroke="#00ffff" stroke-width="1"/>
+  <line x1="16" y1="6" x2="16" y2="3" stroke="#00ffff" stroke-width="1"/>
+  <line x1="8" y1="18" x2="8" y2="21" stroke="#00ffff" stroke-width="1"/>
+  <line x1="12" y1="18" x2="12" y2="21" stroke="#00ffff" stroke-width="1"/>
+  <line x1="16" y1="18" x2="16" y2="21" stroke="#00ffff" stroke-width="1"/>
+</svg>

@@ -240,6 +240,151 @@
       opacity: 0.7;
     }
 
+    /* Terminal Trace Window */
+    .terminal-trace {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 45%;
+      background: rgba(0, 0, 0, 0.98);
+      border-top: 1px solid var(--neon-cyan);
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      line-height: 1.5;
+      overflow: hidden;
+      padding: 6px;
+      box-shadow: 
+        inset 0 1px 10px rgba(0, 255, 255, 0.2),
+        inset 0 0 2px var(--neon-cyan);
+      animation: crtFlicker 0.15s infinite;
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0.92; }
+      50% { opacity: 0.95; }
+      100% { opacity: 0.92; }
+    }
+
+    .trace-line {
+      color: var(--neon-cyan);
+      white-space: nowrap;
+      animation: traceLine 0.4s ease-out;
+      text-shadow: 
+        0 0 3px var(--neon-cyan),
+        0 0 5px var(--neon-cyan);
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    @keyframes traceLine {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+        filter: blur(2px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0);
+      }
+    }
+
+    .trace-line.latest {
+      color: var(--gold);
+      text-shadow: 
+        0 0 5px var(--gold),
+        0 0 10px var(--gold);
+      font-weight: bold;
+    }
+
+    .trace-timestamp {
+      color: rgba(0, 255, 255, 0.4);
+      margin-right: 6px;
+      font-size: 7px;
+    }
+
+    .trace-line::before {
+      content: '▸ ';
+      color: var(--neon-cyan);
+      opacity: 0.5;
+    }
+
+    .trace-line.latest::before {
+      color: var(--gold);
+      opacity: 1;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* SVG Trace Path */
+    .trace-path {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .trace-path path {
+      fill: none;
+      stroke: var(--neon-cyan);
+      stroke-width: 2;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 4px var(--neon-cyan));
+      stroke-dasharray: 300;
+      stroke-dashoffset: 300;
+      animation: tracePath 3s ease-in-out infinite;
+    }
+
+    @keyframes tracePath {
+      0% {
+        stroke-dashoffset: 300;
+        opacity: 0;
+        stroke: var(--neon-cyan);
+      }
+      30% {
+        opacity: 0.8;
+      }
+      60% {
+        stroke: var(--gold);
+        opacity: 1;
+      }
+      100% {
+        stroke-dashoffset: -300;
+        opacity: 0;
+        stroke: var(--neon-cyan);
+      }
+    }
+
+    /* Alternate animation delay for visual variety */
+    .tile:nth-child(2) .trace-path path {
+      animation-delay: 0.5s;
+    }
+
+    .tile:nth-child(3) .trace-path path {
+      animation-delay: 1s;
+    }
+
+    .tile:nth-child(4) .trace-path path {
+      animation-delay: 1.5s;
+    }
+
+    .tile:nth-child(5) .trace-path path {
+      animation-delay: 2s;
+    }
+
+    .tile:nth-child(6) .trace-path path {
+      animation-delay: 2.5s;
+    }
+
     /* Data Stream Effect */
     .data-stream {
       position: absolute;
@@ -454,7 +599,9 @@
     <div class="tile-grid">
       <!-- CPU Tile -->
       <div class="tile" onclick="openModal('cpu')">
-        <div class="data-stream"></div>
+        <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,50 Q25,20 50,50 T100,50"/>
+        </svg>
         <div class="tile-content">
           <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke-width="2">
             <rect x="4" y="4" width="16" height="16" rx="2"/>
@@ -467,11 +614,14 @@
           <div class="tile-value" id="cpu-tile">--</div>
           <div class="tile-label">CPU</div>
         </div>
+        <div class="terminal-trace" id="cpu-trace"></div>
       </div>
 
       <!-- Memory Tile -->
       <div class="tile" onclick="openModal('mem')">
-        <div class="data-stream" style="animation-delay: 0.5s"></div>
+        <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,70 L25,30 L50,60 L75,20 L100,50"/>
+        </svg>
         <div class="tile-content">
           <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke-width="2">
             <rect x="4" y="4" width="16" height="16"/>
@@ -481,11 +631,14 @@
           <div class="tile-value" id="mem-tile">--</div>
           <div class="tile-label">MEMORY</div>
         </div>
+        <div class="terminal-trace" id="mem-trace"></div>
       </div>
 
       <!-- Disk Tile -->
       <div class="tile" onclick="openModal('disk')">
-        <div class="data-stream" style="animation-delay: 1s"></div>
+        <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,50 C20,30 40,70 60,50 S100,30 100,50"/>
+        </svg>
         <div class="tile-content">
           <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke-width="2">
             <circle cx="12" cy="12" r="8"/>
@@ -494,11 +647,14 @@
           <div class="tile-value" id="disk-tile">--</div>
           <div class="tile-label">STORAGE</div>
         </div>
+        <div class="terminal-trace" id="disk-trace"></div>
       </div>
 
       <!-- Network Tile -->
       <div class="tile" onclick="openModal('net')">
-        <div class="data-stream" style="animation-delay: 1.5s"></div>
+        <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,80 Q25,10 50,50 T100,20"/>
+        </svg>
         <div class="tile-content">
           <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
@@ -507,11 +663,14 @@
           <div class="tile-value" id="net-tile">--</div>
           <div class="tile-label">NETWORK</div>
         </div>
+        <div class="terminal-trace" id="net-trace"></div>
       </div>
 
       <!-- I/O Tile -->
       <div class="tile" onclick="openModal('io')">
-        <div class="data-stream" style="animation-delay: 2s"></div>
+        <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,20 L20,80 L40,40 L60,70 L80,30 L100,60"/>
+        </svg>
         <div class="tile-content">
           <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke-width="2">
             <polyline points="16 3 21 8 16 13"/>
@@ -522,11 +681,14 @@
           <div class="tile-value" id="io-tile">--</div>
           <div class="tile-label">I/O</div>
         </div>
+        <div class="terminal-trace" id="io-trace"></div>
       </div>
 
       <!-- Neural Tile -->
       <div class="tile" onclick="openModal('neural')">
-        <div class="data-stream" style="animation-delay: 2.5s"></div>
+        <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,50 Q10,20 20,50 T40,50 Q50,80 60,50 T80,50 Q90,20 100,50"/>
+        </svg>
         <div class="tile-content">
           <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke-width="2">
             <circle cx="12" cy="12" r="8"/>
@@ -539,6 +701,7 @@
           <div class="tile-value" id="neural-tile">--</div>
           <div class="tile-label">NEURAL</div>
         </div>
+        <div class="terminal-trace" id="neural-trace"></div>
       </div>
     </div>
   </div>
@@ -646,6 +809,39 @@
       }
     }
 
+    // Terminal History
+    const history = {
+      cpu: [],
+      mem: [],
+      disk: [],
+      net: [],
+      io: [],
+      neural: []
+    };
+    const MAX_HISTORY = 5;
+
+    function addTrace(metric, value) {
+      const timestamp = new Date().toISOString().slice(11, 23);
+      history[metric].push({ timestamp, value });
+      if (history[metric].length > MAX_HISTORY) {
+        history[metric].shift();
+      }
+      updateTrace(metric);
+    }
+
+    function updateTrace(metric) {
+      const traceDiv = document.getElementById(metric + '-trace');
+      if (!traceDiv) return;
+      
+      traceDiv.innerHTML = history[metric].map((item, idx) => {
+        const isLatest = idx === history[metric].length - 1;
+        return `<div class="trace-line ${isLatest ? 'latest' : ''}">` +
+               `<span class="trace-timestamp">${item.timestamp}</span>` +
+               `${item.value}` +
+               `</div>`;
+      }).join('');
+    }
+
     let lastUpdateTime = 0;
     const UPDATE_INTERVAL = 1000 / 60;
 
@@ -657,14 +853,22 @@
       requestAnimationFrame(update60Hz);
     }
 
+    let lastTraceUpdate = 0;
+    const TRACE_INTERVAL = 2000;
+
     async function updateTiles() {
       const stats = await fetchStats();
       const rt = await fetchRealtime();
+      const now = Date.now();
       
       if (stats) {
         const cpuTotal = stats.cpu.user + stats.cpu.system;
         document.getElementById('cpu-tile').textContent = cpuTotal.toFixed(0);
         document.getElementById('cpu-full').textContent = cpuTotal.toFixed(1) + '%';
+        
+        if (now - lastTraceUpdate >= TRACE_INTERVAL) {
+          addTrace('cpu', `CPU ${cpuTotal.toFixed(1)}%`);
+        }
         
         const memFree = parseFloat(stats.memory.free || '0');
         const memActive = parseFloat(stats.memory.active || '0');
@@ -673,16 +877,41 @@
         document.getElementById('mem-tile').textContent = memPercent.toFixed(0);
         document.getElementById('mem-full').textContent = memPercent.toFixed(1) + '%';
         
+        if (now - lastTraceUpdate >= TRACE_INTERVAL) {
+          addTrace('mem', `MEM ${memPercent.toFixed(1)}%`);
+        }
+        
         const diskPercent = parseFloat(stats.disk.percent);
         document.getElementById('disk-tile').textContent = diskPercent.toFixed(0);
+        
+        if (now - lastTraceUpdate >= TRACE_INTERVAL) {
+          addTrace('disk', `DSK ${diskPercent.toFixed(1)}%`);
+        }
       }
 
       if (rt) {
         const netTotal = (rt.network.rxRate + rt.network.txRate).toFixed(0);
         document.getElementById('net-tile').textContent = netTotal;
         
+        if (now - lastTraceUpdate >= TRACE_INTERVAL) {
+          addTrace('net', `NET ↓${rt.network.rxRate.toFixed(0)} ↑${rt.network.txRate.toFixed(0)} KB/s`);
+        }
+        
         const ioTotal = (parseFloat(rt.disk.readKBps) + parseFloat(rt.disk.writeKBps)).toFixed(0);
         document.getElementById('io-tile').textContent = ioTotal;
+        
+        if (now - lastTraceUpdate >= TRACE_INTERVAL) {
+          addTrace('io', `I/O R${parseFloat(rt.disk.readKBps).toFixed(0)} W${parseFloat(rt.disk.writeKBps).toFixed(0)} KB/s`);
+        }
+      }
+
+      if (now - lastTraceUpdate >= TRACE_INTERVAL) {
+        // Neural tile placeholder
+        const neuralValue = Math.floor(Math.random() * 100);
+        document.getElementById('neural-tile').textContent = neuralValue;
+        addTrace('neural', `NEURAL ${neuralValue}% ACTIVE`);
+        
+        lastTraceUpdate = now;
       }
     }
 

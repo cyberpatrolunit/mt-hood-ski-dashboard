@@ -768,7 +768,7 @@
       </div>
 
       <!-- Heartbeat Tile -->
-      <div class="tile">
+      <div class="tile" onclick="openModal('pulse')">
         <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
           <path d="M0,50 L20,50 L25,30 L30,70 L35,40 L40,50 L60,50 L65,30 L70,70 L75,40 L80,50 L100,50"/>
         </svg>
@@ -783,7 +783,7 @@
       </div>
 
       <!-- Power Tile -->
-      <div class="tile">
+      <div class="tile" onclick="openModal('power')">
         <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
           <path d="M0,80 L20,70 L40,75 L60,65 L80,70 L100,60"/>
         </svg>
@@ -798,7 +798,7 @@
       </div>
 
       <!-- Temperature Tile -->
-      <div class="tile">
+      <div class="tile" onclick="openModal('temp')">
         <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
           <path d="M0,60 Q25,55 50,58 T100,62"/>
         </svg>
@@ -813,7 +813,7 @@
       </div>
 
       <!-- Uptime Tile -->
-      <div class="tile">
+      <div class="tile" onclick="openModal('uptime')">
         <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
           <path d="M0,50 L100,50"/>
         </svg>
@@ -829,7 +829,7 @@
       </div>
 
       <!-- Consciousness Tile -->
-      <div class="tile">
+      <div class="tile" onclick="openModal('awareness')">
         <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
           <path d="M0,50 Q15,30 30,50 Q45,70 60,50 Q75,30 90,50 L100,50"/>
         </svg>
@@ -845,7 +845,7 @@
       </div>
 
       <!-- Sensory Array Tile -->
-      <div class="tile">
+      <div class="tile" onclick="openModal('sensor')">
         <svg class="trace-path" viewBox="0 0 100 100" preserveAspectRatio="none">
           <path d="M0,50 L10,45 L20,55 L30,40 L40,60 L50,35 L60,65 L70,45 L80,55 L90,50 L100,50"/>
         </svg>
@@ -888,6 +888,203 @@
       </div>
       <div class="chart-container">
         <canvas id="mem-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disk Modal -->
+  <div id="disk-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>STORAGE</h2>
+      <div class="modal-stat">
+        <span class="modal-label">CAPACITY</span>
+        <span class="modal-value" id="disk-full">--</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">USED</span>
+        <span class="modal-value" id="disk-used">--</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">FREE</span>
+        <span class="modal-value" id="disk-free">--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Network Modal -->
+  <div id="net-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>NETWORK</h2>
+      <div class="modal-stat">
+        <span class="modal-label">DOWNLOAD</span>
+        <span class="modal-value" id="net-rx">-- KB/s</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">UPLOAD</span>
+        <span class="modal-value" id="net-tx">-- KB/s</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="net-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- I/O Modal -->
+  <div id="io-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>DISK I/O</h2>
+      <div class="modal-stat">
+        <span class="modal-label">READ</span>
+        <span class="modal-value" id="io-read">-- KB/s</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">WRITE</span>
+        <span class="modal-value" id="io-write">-- KB/s</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="io-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Neural Modal -->
+  <div id="neural-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>NEURAL ACTIVITY</h2>
+      <div class="modal-stat">
+        <span class="modal-label">PROCESSING</span>
+        <span class="modal-value" id="neural-full">--%</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">SYNAPSES</span>
+        <span class="modal-value" id="neural-synapses">-- ACTIVE</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="neural-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pulse Modal -->
+  <div id="pulse-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>CARDIAC RHYTHM</h2>
+      <div class="modal-stat">
+        <span class="modal-label">HEART RATE</span>
+        <span class="modal-value" id="pulse-full">-- BPM</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">VARIABILITY</span>
+        <span class="modal-value" id="pulse-hrv">-- ms</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="pulse-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Power Modal -->
+  <div id="power-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>POWER SYSTEMS</h2>
+      <div class="modal-stat">
+        <span class="modal-label">CONSUMPTION</span>
+        <span class="modal-value" id="power-full">-- W</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">EFFICIENCY</span>
+        <span class="modal-value" id="power-efficiency">--%</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="power-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Temperature Modal -->
+  <div id="temp-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>THERMAL STATUS</h2>
+      <div class="modal-stat">
+        <span class="modal-label">CORE TEMP</span>
+        <span class="modal-value" id="temp-full">--°C</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">THRESHOLD</span>
+        <span class="modal-value" id="temp-max">85°C</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="temp-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Uptime Modal -->
+  <div id="uptime-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>LIFE SUPPORT</h2>
+      <div class="modal-stat">
+        <span class="modal-label">ONLINE DURATION</span>
+        <span class="modal-value" id="uptime-full">-- h</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">BOOT TIME</span>
+        <span class="modal-value" id="uptime-boot">--</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">STABILITY</span>
+        <span class="modal-value" id="uptime-stability">NOMINAL</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Awareness Modal -->
+  <div id="awareness-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>CONSCIOUSNESS</h2>
+      <div class="modal-stat">
+        <span class="modal-label">AWARENESS LEVEL</span>
+        <span class="modal-value" id="awareness-full">--%</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">COGNITIVE LOAD</span>
+        <span class="modal-value" id="awareness-load">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="awareness-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sensor Modal -->
+  <div id="sensor-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">×</div>
+      <h2>SENSORY ARRAY</h2>
+      <div class="modal-stat">
+        <span class="modal-label">ACTIVE SENSORS</span>
+        <span class="modal-value" id="sensor-full">--/8</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">VISUAL</span>
+        <span class="modal-value" id="sensor-visual">ONLINE</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">AUDIO</span>
+        <span class="modal-value" id="sensor-audio">ONLINE</span>
+      </div>
+      <div class="modal-stat">
+        <span class="modal-label">NETWORK</span>
+        <span class="modal-value" id="sensor-network">ONLINE</span>
       </div>
     </div>
   </div>
@@ -984,6 +1181,150 @@
     
     let startTime = Date.now();
 
+    // Chart History (30 points)
+    const chartHistory = {
+      cpu: [],
+      mem: [],
+      net: { rx: [], tx: [] },
+      io: { read: [], write: [] },
+      neural: [],
+      pulse: [],
+      power: [],
+      temp: [],
+      awareness: []
+    };
+    const CHART_MAX = 30;
+
+    // Chart instances
+    const charts = {};
+
+    function initChart(canvasId, label, color) {
+      const ctx = document.getElementById(canvasId);
+      if (!ctx) return null;
+      
+      return new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array(CHART_MAX).fill(''),
+          datasets: [{
+            label: label,
+            data: Array(CHART_MAX).fill(0),
+            borderColor: color,
+            backgroundColor: color + '20',
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0, 255, 255, 0.1)' },
+              ticks: { color: '#00ffff', font: { size: 10 } }
+            },
+            x: {
+              grid: { color: 'rgba(0, 255, 255, 0.1)' },
+              ticks: { display: false }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function initDualChart(canvasId, label1, label2, color1, color2) {
+      const ctx = document.getElementById(canvasId);
+      if (!ctx) return null;
+      
+      return new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array(CHART_MAX).fill(''),
+          datasets: [
+            {
+              label: label1,
+              data: Array(CHART_MAX).fill(0),
+              borderColor: color1,
+              backgroundColor: color1 + '20',
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: label2,
+              data: Array(CHART_MAX).fill(0),
+              borderColor: color2,
+              backgroundColor: color2 + '20',
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.4,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0, 255, 255, 0.1)' },
+              ticks: { color: '#00ffff', font: { size: 10 } }
+            },
+            x: {
+              grid: { color: 'rgba(0, 255, 255, 0.1)' },
+              ticks: { display: false }
+            }
+          },
+          plugins: {
+            legend: { 
+              display: true,
+              position: 'top',
+              labels: { color: '#00ffff', font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Initialize charts on load
+    setTimeout(() => {
+      charts.cpu = initChart('cpu-chart', 'CPU %', '#00ffff');
+      charts.mem = initChart('mem-chart', 'Memory %', '#00ffff');
+      charts.net = initDualChart('net-chart', 'Download', 'Upload', '#00ffff', '#ffd700');
+      charts.io = initDualChart('io-chart', 'Read', 'Write', '#00ffff', '#ffd700');
+      charts.neural = initChart('neural-chart', 'Neural Activity %', '#00ffff');
+      charts.pulse = initChart('pulse-chart', 'Heart Rate BPM', '#ff0040');
+      charts.power = initChart('power-chart', 'Power (W)', '#ffd700');
+      charts.temp = initChart('temp-chart', 'Temperature °C', '#ff4500');
+      charts.awareness = initChart('awareness-chart', 'Consciousness %', '#00ffff');
+    }, 500);
+
+    function updateChart(chart, value) {
+      if (!chart) return;
+      chart.data.datasets[0].data.shift();
+      chart.data.datasets[0].data.push(value);
+      chart.update();
+    }
+
+    function updateDualChart(chart, value1, value2) {
+      if (!chart) return;
+      chart.data.datasets[0].data.shift();
+      chart.data.datasets[0].data.push(value1);
+      chart.data.datasets[1].data.shift();
+      chart.data.datasets[1].data.push(value2);
+      chart.update();
+    }
+
     function addTrace(metric, value) {
       const timestamp = new Date().toISOString().slice(11, 23);
       history[metric].push({ timestamp, value });
@@ -1029,6 +1370,7 @@
         const cpuTotal = stats.cpu.user + stats.cpu.system;
         document.getElementById('cpu-tile').textContent = cpuTotal.toFixed(0);
         document.getElementById('cpu-full').textContent = cpuTotal.toFixed(1) + '%';
+        updateChart(charts.cpu, cpuTotal);
         
         if (now - lastTraceUpdate >= TRACE_INTERVAL) {
           addTrace('cpu', `CPU ${cpuTotal.toFixed(1)}%`);
@@ -1040,13 +1382,20 @@
         const memPercent = memTotal > 0 ? ((memActive / memTotal) * 100) : 0;
         document.getElementById('mem-tile').textContent = memPercent.toFixed(0);
         document.getElementById('mem-full').textContent = memPercent.toFixed(1) + '%';
+        updateChart(charts.mem, memPercent);
         
         if (now - lastTraceUpdate >= TRACE_INTERVAL) {
           addTrace('mem', `MEM ${memPercent.toFixed(1)}%`);
         }
         
         const diskPercent = parseFloat(stats.disk.percent);
+        const diskUsed = stats.disk.used || '--';
+        const diskFree = stats.disk.available || '--';
+        const diskTotal = stats.disk.total || '--';
         document.getElementById('disk-tile').textContent = diskPercent.toFixed(0);
+        document.getElementById('disk-full').textContent = diskPercent.toFixed(1) + '%';
+        document.getElementById('disk-used').textContent = diskUsed;
+        document.getElementById('disk-free').textContent = diskFree;
         
         if (now - lastTraceUpdate >= TRACE_INTERVAL) {
           addTrace('disk', `DSK ${diskPercent.toFixed(1)}%`);
@@ -1054,18 +1403,28 @@
       }
 
       if (rt) {
-        const netTotal = (rt.network.rxRate + rt.network.txRate).toFixed(0);
+        const netRx = rt.network.rxRate;
+        const netTx = rt.network.txRate;
+        const netTotal = (netRx + netTx).toFixed(0);
         document.getElementById('net-tile').textContent = netTotal;
+        document.getElementById('net-rx').textContent = netRx.toFixed(1) + ' KB/s';
+        document.getElementById('net-tx').textContent = netTx.toFixed(1) + ' KB/s';
+        updateDualChart(charts.net, netRx, netTx);
         
         if (now - lastTraceUpdate >= TRACE_INTERVAL) {
-          addTrace('net', `NET ↓${rt.network.rxRate.toFixed(0)} ↑${rt.network.txRate.toFixed(0)} KB/s`);
+          addTrace('net', `NET ↓${netRx.toFixed(0)} ↑${netTx.toFixed(0)} KB/s`);
         }
         
-        const ioTotal = (parseFloat(rt.disk.readKBps) + parseFloat(rt.disk.writeKBps)).toFixed(0);
+        const ioRead = parseFloat(rt.disk.readKBps);
+        const ioWrite = parseFloat(rt.disk.writeKBps);
+        const ioTotal = (ioRead + ioWrite).toFixed(0);
         document.getElementById('io-tile').textContent = ioTotal;
+        document.getElementById('io-read').textContent = ioRead.toFixed(1) + ' KB/s';
+        document.getElementById('io-write').textContent = ioWrite.toFixed(1) + ' KB/s';
+        updateDualChart(charts.io, ioRead, ioWrite);
         
         if (now - lastTraceUpdate >= TRACE_INTERVAL) {
-          addTrace('io', `I/O R${parseFloat(rt.disk.readKBps).toFixed(0)} W${parseFloat(rt.disk.writeKBps).toFixed(0)} KB/s`);
+          addTrace('io', `I/O R${ioRead.toFixed(0)} W${ioWrite.toFixed(0)} KB/s`);
         }
       }
 
@@ -1073,53 +1432,73 @@
         // Neural tile - simulate neural activity based on system load
         const cpuTotal = stats ? (stats.cpu.user + stats.cpu.system) : 0;
         const neuralValue = Math.floor(60 + (cpuTotal * 0.4) + (Math.random() * 10));
+        const synapses = Math.floor(1000 + (neuralValue * 50));
         document.getElementById('neural-tile').textContent = neuralValue;
+        document.getElementById('neural-full').textContent = neuralValue + '%';
+        document.getElementById('neural-synapses').textContent = synapses + ' ACTIVE';
+        updateChart(charts.neural, neuralValue);
         addTrace('neural', `NEURAL ${neuralValue}% ACTIVE`);
         
         // Pulse - heartbeat derived from CPU activity (60-120 BPM)
         const pulse = Math.floor(65 + (cpuTotal * 0.5) + (Math.sin(now / 1000) * 5));
+        const hrv = Math.floor(50 + (Math.random() * 40));
         document.getElementById('pulse-tile').textContent = pulse;
+        document.getElementById('pulse-full').textContent = pulse + ' BPM';
+        document.getElementById('pulse-hrv').textContent = hrv + ' ms';
+        updateChart(charts.pulse, pulse);
         addTrace('pulse', `PULSE ${pulse} BPM`);
         
         // Power - from realtime API or simulate
+        let powerWatts;
         if (rt && rt.power) {
-          const powerWatts = parseFloat(rt.power.watts || 0).toFixed(1);
-          document.getElementById('power-tile').textContent = powerWatts;
-          addTrace('power', `PWR ${powerWatts}W`);
+          powerWatts = parseFloat(rt.power.watts || 0);
         } else {
           // Simulate power consumption based on CPU load
-          const powerWatts = (15 + (cpuTotal * 0.3) + (Math.random() * 2)).toFixed(1);
-          document.getElementById('power-tile').textContent = powerWatts;
-          addTrace('power', `PWR ${powerWatts}W`);
+          powerWatts = 15 + (cpuTotal * 0.3) + (Math.random() * 2);
         }
+        const efficiency = Math.floor(85 + (Math.random() * 10));
+        document.getElementById('power-tile').textContent = powerWatts.toFixed(1);
+        document.getElementById('power-full').textContent = powerWatts.toFixed(1) + ' W';
+        document.getElementById('power-efficiency').textContent = efficiency + '%';
+        updateChart(charts.power, powerWatts);
+        addTrace('power', `PWR ${powerWatts.toFixed(1)}W`);
         
         // Temperature - from realtime or simulate
+        let temp;
         if (rt && rt.temperature) {
-          const temp = parseFloat(rt.temperature.cpu || 45).toFixed(0);
-          document.getElementById('temp-tile').textContent = temp + '°';
-          addTrace('temp', `TEMP ${temp}°C`);
+          temp = parseFloat(rt.temperature.cpu || 45);
         } else {
           // Simulate temperature based on CPU load (35-75°C)
-          const temp = Math.floor(40 + (cpuTotal * 0.35) + (Math.random() * 3));
-          document.getElementById('temp-tile').textContent = temp + '°';
-          addTrace('temp', `TEMP ${temp}°C`);
+          temp = 40 + (cpuTotal * 0.35) + (Math.random() * 3);
         }
+        document.getElementById('temp-tile').textContent = Math.floor(temp) + '°';
+        document.getElementById('temp-full').textContent = temp.toFixed(1) + '°C';
+        updateChart(charts.temp, temp);
+        addTrace('temp', `TEMP ${Math.floor(temp)}°C`);
         
         // Uptime - system uptime
         const uptimeHours = ((now - startTime) / (1000 * 60 * 60)).toFixed(1);
+        const bootTime = new Date(startTime).toLocaleTimeString();
         document.getElementById('uptime-tile').textContent = uptimeHours + 'h';
+        document.getElementById('uptime-full').textContent = uptimeHours + ' h';
+        document.getElementById('uptime-boot').textContent = bootTime;
         addTrace('uptime', `UPTIME ${uptimeHours}h`);
         
         // Consciousness/Awareness - composite activity metric
         const memPercent = stats ? parseFloat(stats.memory.active || 0) / (parseFloat(stats.memory.free || 1) + parseFloat(stats.memory.active || 1)) * 100 : 0;
         const netActivity = rt ? ((rt.network.rxRate + rt.network.txRate) / 10) : 0;
         const awareness = Math.min(100, Math.floor(cpuTotal * 0.4 + memPercent * 0.3 + netActivity * 0.3 + 20));
+        const cognitiveLoad = awareness > 80 ? 'HIGH' : awareness > 50 ? 'MODERATE' : 'LOW';
         document.getElementById('awareness-tile').textContent = awareness;
+        document.getElementById('awareness-full').textContent = awareness + '%';
+        document.getElementById('awareness-load').textContent = cognitiveLoad;
+        updateChart(charts.awareness, awareness);
         addTrace('awareness', `AWARE ${awareness}% CONSCIOUS`);
         
         // Sensors - active connections/streams
         const sensors = Math.floor(4 + (Math.random() * 3));
         document.getElementById('sensor-tile').textContent = sensors;
+        document.getElementById('sensor-full').textContent = sensors + '/8';
         addTrace('sensor', `SENS ${sensors}/8 ACTIVE`);
         
         lastTraceUpdate = now;
